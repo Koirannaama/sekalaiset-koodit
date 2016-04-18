@@ -1,0 +1,1 @@
+Yritys luoda jonkinlainen graafityyppi Haskellilla. 
