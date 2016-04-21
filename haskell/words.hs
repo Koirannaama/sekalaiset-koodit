@@ -1,7 +1,7 @@
 import qualified Data.Map as Map
 
 -- Counts the immediate successors of every string in a list of string.
--- successorCounter ["koira", "kissa", "hiiri", "marsu"]
+-- successorCounter ["koira", "kissa", "hiiri", "marsu"] Map.empty
 -- == [("koira", (1, "kissa")),
 --     ("kissa", (1, "hiiri")),
 --     ("hiiri", (1, "marsu"))]
