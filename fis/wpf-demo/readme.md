@@ -1,0 +1,1 @@
+Minimaalinen kokeilu F#:n ja WPF:n yhteispelistä.
