@@ -33,3 +33,13 @@ euclid (x, y)
   | x == y = y
   | x > y = euclid ((x - y), y)
   | otherwise = euclid (x, (y - x))
+
+funkyMapHelper :: (a -> b) -> (a -> b) -> Integer -> [a] -> [b]
+funkyMapHelper f g i [] = []
+funkyMapHelper f g i (x:xs)
+  | i `mod` 2 == 0 = (f x) : funkyMapHelper f g (i + 1) xs
+  | otherwise = (g x) : funkyMapHelper f g (i + 1) xs
+
+funkyMap :: (a -> b) -> (a -> b) -> [a] -> [b]
+funkyMap f g [] = []
+funkyMap f g xs = funkyMapHelper f g 0 xs
