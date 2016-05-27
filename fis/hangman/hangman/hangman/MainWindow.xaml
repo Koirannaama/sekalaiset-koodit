@@ -1,0 +1,26 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ViewModels;assembly=hangman"
+    xmlns:fsxaml="http://github.com/fsprojects/FsXaml"
+    Title="MVVM and XAML Type provider" Height="200" Width="400">
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <TextBox Name="SecretWord" Width="200" Grid.Row="0" Grid.Column="0" Text="{Binding SecretWord}"></TextBox>
+        <Button Name="SubmitSecret" Width="50" Height="20" Grid.Row="0" Grid.Column="1" Content="Set secret" HorizontalAlignment="Left" Command="{Binding SetSecret}"></Button>
+        <TextBox Name="Guess" Width="30" Grid.Row="1" Grid.Column="0"></TextBox>
+        <Button Name="SubmitGuess" Width="50" Height="20" Content="Guess" Grid.Row="1" Grid.Column="1"></Button>
+        <Label Name="Progress" Width="100" Grid.Row="2" Grid.Column="0" Content="{Binding Progress}"></Label>
+    </Grid>
+</Window>
