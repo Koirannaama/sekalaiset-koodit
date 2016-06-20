@@ -22,6 +22,6 @@
         <TextBox Name="Guess" Width="30" Grid.Row="1" Grid.Column="0" Text="{Binding Guess}" MaxLength="1"></TextBox>
         <Button Name="SubmitGuess" Width="50" Height="20" Content="Guess" Grid.Row="1" Grid.Column="1" Command="{Binding DoGuess}"></Button>
         <Label Name="Progress" Width="100" Grid.Row="2" Grid.Column="0" Content="{Binding Progress}"></Label>
-        <Label Name="WinLabel" Width="100" Grid.Row="2" Grid.Column="1" Content="{Binding WinText}"></Label>
+        <Label Name="ResultLabel" Width="100" Grid.Row="2" Grid.Column="1" Content="{Binding ResultText}"></Label>
     </Grid>
 </Window>
