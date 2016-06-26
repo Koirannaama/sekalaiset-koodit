@@ -1,0 +1,1 @@
+HTML/CSS-prototyyppi hypoteettisen käsienvuokraamispalvelun nettisivusta. HTML-/CSS-/protoilu-/UI-suunnittelu-harjoitus.
