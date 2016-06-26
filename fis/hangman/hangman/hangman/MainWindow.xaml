@@ -3,12 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ViewModels;assembly=hangman"
     xmlns:fsxaml="http://github.com/fsprojects/FsXaml"
-    Title="MVVM and XAML Type provider" Height="200" Width="400">
+    xmlns:hControls="clr-namespace:HangmanControls;assembly=Hangman"
+    Title="Hangman" Height="300" Width="400">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -23,5 +25,6 @@
         <Button Name="SubmitGuess" Width="50" Height="20" Content="Guess" Grid.Row="1" Grid.Column="1" Command="{Binding DoGuess}"></Button>
         <Label Name="Progress" Width="100" Grid.Row="2" Grid.Column="0" Content="{Binding Progress}"></Label>
         <Label Name="ResultLabel" Width="100" Grid.Row="2" Grid.Column="1" Content="{Binding ResultText}"></Label>
+        <hControls:HangmanStatus Grid.Row="3" Grid.Column="0"></hControls:HangmanStatus>
     </Grid>
 </Window>

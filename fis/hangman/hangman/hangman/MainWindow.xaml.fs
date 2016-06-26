@@ -22,7 +22,11 @@ type HangmanModel = {
 
     member this.checkGuess guess =
         let progress = this.updateProgress this.Progress <| this.checkHits guess this.SecretWord
-        { MaxTries = this.MaxTries; Tries = this.Tries + 1; SecretWord = this.SecretWord; Progress = progress }
+        let tries = this.updateTries progress
+        { MaxTries = this.MaxTries; Tries = tries; SecretWord = this.SecretWord; Progress = progress }
+
+    member private this.updateTries newProgress =
+        if newProgress = this.Progress then this.Tries + 1 else this.Tries
 
     member private this.checkHits guess word =
         String.map (fun c -> if c = guess then c else '-') word
