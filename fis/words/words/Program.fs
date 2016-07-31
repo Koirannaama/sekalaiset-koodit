@@ -26,7 +26,8 @@ module Words =
         match text with
         | Some s -> 
                 s.Split([|' '|])
-                |> Seq.map Word
+                |> Seq.map createWord
+                |> Seq.choose id
         | _ -> Seq.empty
     
     let addPairToMap (map:Map<Word, Word list>) (word:Word, successor:Word) =
@@ -43,7 +44,7 @@ module Words =
 
     let cleanResults (wordsAndSuccessors:Map<Word, Word list>) = 
         wordsAndSuccessors
-        |> Map.filter (fun word succs -> notEmpty word && not <| List.isEmpty succs )
+        |> Map.filter (fun word succs -> not <| List.isEmpty succs )
                             
     let getRandomIndex length = 
           let currentMillis = DateTime.Now.Millisecond
@@ -66,18 +67,18 @@ module Words =
             Seq.filter (fun w -> firstChar w |> charIsUpperCase) words
         getRandomWordFrom startWords
 
-//    let getStartWords wordsAndSuccessors =
-//        let getStartWordsFromSuccessors succs =
-//            List.filter (fun w -> firstChar w |> charIsUpperCase) succs
-//
-//        let ifIsEndWordGetStartWords startWords word succs =
-//            if containsEndChar word then
-//                getStartWordsFromSuccessors succs
-//                |> List.append startWords 
-//            else
-//                startWords
-//
-//        Map.fold ifIsEndWordGetStartWords [] wordsAndSuccessors
+    let getStartWords wordsAndSuccessors =
+        let getStartWordsFromSuccessors succs =
+            List.filter (fun w -> firstChar w |> charIsUpperCase) succs
+
+        let ifIsEndWordGetStartWords startWords word succs =
+            if containsEndChar word then
+                getStartWordsFromSuccessors succs
+                |> List.append startWords 
+            else
+                startWords
+
+        Map.fold ifIsEndWordGetStartWords [] wordsAndSuccessors
         
     let formSentence (wordsAndSuccessors:Map<Word, Word list>) =
         let rec pickNextWord word (wordsAndSuccs:Map<Word, Word list>) sentence =
@@ -88,12 +89,12 @@ module Words =
                 let newSentence = Seq.append sentence [word]
                 pickNextWord newWord wordsAndSuccs newSentence
 
-//        let startWord = getStartWords wordsAndSuccessors
-//                        |> getRandomWordFrom
+        let startWord = getStartWords wordsAndSuccessors
+                        |> getRandomWordFrom
         
-        let startWord = Map.toSeq wordsAndSuccessors
-                        |> Seq.map fst
-                        |> getStartWord
+//        let startWord = Map.toSeq wordsAndSuccessors
+//                        |> Seq.map fst
+//                        |> getStartWord
         pickNextWord startWord wordsAndSuccessors []
 
     [<EntryPoint>]
