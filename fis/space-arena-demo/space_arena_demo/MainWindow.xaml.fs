@@ -18,7 +18,7 @@ type MainViewModel() as self =
 
 type SquareClick = SquareClick of int * int
 type Square = KnownSquare of Polygon | Unknown
-type ShipInMap = Ship of Polygon * Coordinate
+type ShipInMap = ShipInMap of Coordinate
 
 let private squarePoints(sideLength) =
     new PointCollection([new Point(0.0, 0.0); 
@@ -50,15 +50,6 @@ let private mouseMoveStream(mv: MainView) =
     let exitStream = mv.BackgroundCanvas.MouseLeave
                      |> Observable.map (fun e -> Unknown)
     Observable.merge moveStream exitStream
-
-let private updateShips ships fromCoord toCoord sideLength =
-    let checkShip (Ship(p, c) as s) = 
-        if c = fromCoord then
-            Ship (p, toCoord)
-        else
-            s
-    ships
-    |> List.map (fun s -> checkShip s) 
     
 let private setPolygonCoords sideLength p x y =  
     let canvasX = (float x)*sideLength
@@ -66,13 +57,29 @@ let private setPolygonCoords sideLength p x y =
     Canvas.SetTop(p, canvasY)
     Canvas.SetLeft(p, canvasX)
 
-let private createMoveStream sideLength initialState moveEvent =
-    let movePolygonTo = setPolygonCoords sideLength
-    let moveShipTo (Ship(p, (Coordinate(x,y)))) = movePolygonTo p x y
+let private drawPolygon x y (polygon:Polygon) =
+    Canvas.SetTop(polygon, y)
+    Canvas.SetLeft(polygon, x)
+    polygon
+
+let private addPolyToCanvas (canvas:Canvas) polygon =
+    canvas.Children.Add(polygon) |> ignore
+
+let private removeShips ships (canvas:Canvas) =
+    ships
+    |> List.iter (fun s -> canvas.Children.Remove(s))
+    canvas
+
+let private createShipPolygons sideLength ships (canvas:Canvas) =
+    ships
+    |> List.map (fun (ShipInMap(Coordinate(x,y))) -> ship() |> drawPolygon (float(x)*sideLength) (float(y)*sideLength))
+
+let private createMoveStream sideLength (canvas:Canvas) initPolys moveEvent =
+    let addShipToCanvas = addPolyToCanvas canvas
 
     moveEvent
-    |> Observable.scan ( fun ships move -> updateShips ships move.fromCoord move.toCoord sideLength) initialState
-    |> Observable.subscribe (fun ships -> List.iter moveShipTo ships)
+    |> Observable.scan ( fun shipPolys shipData -> removeShips shipPolys canvas |> createShipPolygons sideLength shipData) initPolys
+    |> Observable.subscribe (fun shipPolys -> List.iter addShipToCanvas shipPolys)
 
 let private setSquareColor prevSquare newSquare =
     let setColor square color =
@@ -86,25 +93,13 @@ let private setSquareColor prevSquare newSquare =
         do setColor prevSquare Brushes.Black
            setColor newSquare Brushes.Aqua
 
-let private setUpInitialState sideLength (ShipModel c) =
-    let ship = ship()
-    Ship (ship, c) |> List.singleton 
-
-let private drawPolygon polygon (canvas:Canvas) x y =
-    Canvas.SetTop(polygon, y)
-    Canvas.SetLeft(polygon, x)
-    canvas.Children.Add(polygon) |> ignore
-
-
 let private squareClickStream (mv: MainView) sideLength =
   mv.BackgroundCanvas.MouseDown
   |> Observable.map (fun e -> let p = e.GetPosition(mv.BackgroundCanvas)
                               SquareClick(p.X / sideLength |> int, p.Y / sideLength |> int))
 
-let initMainView (sideLength:float) (ship:ShipModel) =
+let initMainView (sideLength:float) initShips =
     let mv = MainView()
-    let initialState = setUpInitialState sideLength ship 
-    List.iter (fun (Ship(p, (Coordinate(x,y)))) -> drawPolygon p mv.BackgroundCanvas ((float x)*sideLength) ((float y)*sideLength)) initialState
     
     let rec mouseMoveLoop prevSquare =
         async { 
@@ -113,15 +108,18 @@ let initMainView (sideLength:float) (ship:ShipModel) =
             return! mouseMoveLoop(newSquare)
         }
 
+    let initPolys = createShipPolygons sideLength initShips mv.BackgroundCanvas
+
     let squaresX = mv.BackgroundCanvas.Width / sideLength |> int
     let squaresY = mv.BackgroundCanvas.Height / sideLength |> int
     [for x in 0..squaresX-1 do for y in 0..squaresY-1 -> (x,y)]
-    |> List.iter (fun (x, y) -> do 
+    |> List.iter (fun (x, y) -> do
                                 let s = square(sideLength)
-                                drawPolygon s mv.BackgroundCanvas (sideLength*float(x)) (sideLength*float(y))
-                                )
+                                drawPolygon (sideLength*float(x)) (sideLength*float(y)) s |> ignore
+                                addPolyToCanvas mv.BackgroundCanvas s)
 
     do Async.StartImmediate(mouseMoveLoop(Unknown))
+       List.iter (addPolyToCanvas mv.BackgroundCanvas) initPolys
         
-    (mv, squareClickStream mv sideLength, createMoveStream sideLength initialState)
+    (mv, squareClickStream mv sideLength, createMoveStream sideLength mv.BackgroundCanvas initPolys)
 
