@@ -10,6 +10,7 @@ open FSharp.ViewModule.Validation
 open FSharpx.Control.Observable
 open FsXaml
 open GlobalTypes
+open GraphicalElements
 
 type MainView = XAML<"MainWindow.xaml">
 
@@ -20,36 +21,12 @@ type SquareClick = SquareClick of int * int
 type Square = KnownSquare of Polygon | Unknown
 type ShipInMap = ShipInMap of Coordinate
 
-let private squarePoints(sideLength) =
-    new PointCollection([new Point(0.0, 0.0); 
-                         new Point(sideLength, 0.0);
-                         new Point(sideLength, sideLength);
-                         new Point(0.0, sideLength)])
+let private mouseMoveStream (squares: Polygon list) (canvas:Canvas) =
+    let getEnterStreamFromPoly (poly:Polygon) = poly.MouseEnter |> Observable.map (fun _ -> KnownSquare poly)
 
-let private square(sideLength) = 
-    new Polygon(Height=sideLength, 
-                Width=sideLength,
-                Points=squarePoints(sideLength),
-                Stroke=Brushes.Black,
-                StrokeThickness=2.0,
-                Fill=Brushes.Transparent)
-
-let private ship() =
-    new Polygon(Points=new PointCollection([new Point(0.0,0.0); 
-                                            new Point(15.0,0.0);
-                                            new Point(0.0,15.0)]),
-                Stroke=Brushes.Aqua,
-                Fill=Brushes.Beige)
-    
-
-let private mouseMoveStream(mv: MainView) =
-    let moveStream = mv.BackgroundCanvas.MouseMove
-                     |> Observable.map (fun e -> match e.OriginalSource with 
-                                                 | :? Polygon as p -> KnownSquare p
-                                                 | _ -> Unknown )
-    let exitStream = mv.BackgroundCanvas.MouseLeave
+    let exitStream = canvas.MouseLeave
                      |> Observable.map (fun e -> Unknown)
-    Observable.merge moveStream exitStream
+    List.fold (fun stream square -> getEnterStreamFromPoly square |> Observable.merge stream) exitStream squares
     
 let private setPolygonCoords sideLength p x y =  
     let canvasX = (float x)*sideLength
@@ -72,7 +49,7 @@ let private removeShips ships (canvas:Canvas) =
 
 let private createShipPolygons sideLength ships (canvas:Canvas) =
     ships
-    |> List.map (fun (ShipInMap(Coordinate(x,y))) -> ship() |> drawPolygon (float(x)*sideLength) (float(y)*sideLength))
+    |> List.map (fun (ShipInMap(Coordinate(x,y))) -> ship(sideLength) |> drawPolygon (float(x)*sideLength) (float(y)*sideLength))
 
 let private createMoveStream sideLength (canvas:Canvas) initPolys moveEvent =
     let addShipToCanvas = addPolyToCanvas canvas
@@ -100,26 +77,23 @@ let private squareClickStream (mv: MainView) sideLength =
 
 let initMainView (sideLength:float) initShips =
     let mv = MainView()
-    
+    let initShipPolys = createShipPolygons sideLength initShips mv.BackgroundCanvas
+
+    let squaresX = mv.BackgroundCanvas.Width / sideLength |> int
+    let squaresY = mv.BackgroundCanvas.Height / sideLength |> int
+    let squares = [for x in 0..squaresX-1 do for y in 0..squaresY-1 -> (x,y)] 
+                  |> List.map (fun (x, y) -> square sideLength |> drawPolygon (sideLength*float(x)) (sideLength*float(y)))
+
     let rec mouseMoveLoop prevSquare =
         async { 
-            let! newSquare = Async.AwaitObservable(mouseMoveStream(mv))
+            let! newSquare = Async.AwaitObservable(mouseMoveStream squares mv.BackgroundCanvas)
             do setSquareColor prevSquare newSquare
             return! mouseMoveLoop(newSquare)
         }
 
-    let initPolys = createShipPolygons sideLength initShips mv.BackgroundCanvas
-
-    let squaresX = mv.BackgroundCanvas.Width / sideLength |> int
-    let squaresY = mv.BackgroundCanvas.Height / sideLength |> int
-    [for x in 0..squaresX-1 do for y in 0..squaresY-1 -> (x,y)]
-    |> List.iter (fun (x, y) -> do
-                                let s = square(sideLength)
-                                drawPolygon (sideLength*float(x)) (sideLength*float(y)) s |> ignore
-                                addPolyToCanvas mv.BackgroundCanvas s)
-
     do Async.StartImmediate(mouseMoveLoop(Unknown))
-       List.iter (addPolyToCanvas mv.BackgroundCanvas) initPolys
+       List.iter (addPolyToCanvas mv.BackgroundCanvas) initShipPolys
+       List.iter (addPolyToCanvas mv.BackgroundCanvas) squares
         
-    (mv, squareClickStream mv sideLength, createMoveStream sideLength mv.BackgroundCanvas initPolys)
+    (mv, squareClickStream mv sideLength, createMoveStream sideLength mv.BackgroundCanvas initShipPolys)
 
