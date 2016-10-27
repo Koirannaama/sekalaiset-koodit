@@ -35,8 +35,9 @@
     <DocumentationFile>bin\Release\space_arena_demo.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="GraphicalElements.fs" />
     <Compile Include="GlobalTypes.fs" />
+    <Compile Include="GraphicalElements.fs" />
+    <Compile Include="Model.fs" />
     <Resource Include="MainWindow.xaml" />
     <Compile Include="MainWindow.xaml.fs" />
     <Resource Include="App.xaml" />

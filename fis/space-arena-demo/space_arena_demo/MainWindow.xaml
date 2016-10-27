@@ -3,14 +3,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ViewModels;assembly=space_arena_demo"
     xmlns:fsxaml="http://github.com/fsprojects/FsXaml"
-    Title="Space arena demo" Height="600" Width="600">
+    Title="Space arena demo" Height="650" Width="600">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Name="TestLabel" Content="text" Height="30" Width="300" Grid.Row="0" VerticalAlignment="Bottom"></Label>
-        <Canvas Name="BackgroundCanvas" Height="500" Width="500" Background="Wheat" Grid.Row="1">
-        </Canvas>
+        <Canvas Name="BackgroundCanvas" Height="500" Width="500" Background="Wheat" Grid.Row="1"></Canvas>
+        <Button Name="RotateClockWise" Height="45" Width="45" Background="Gray" Content="C" Grid.Row="2" HorizontalAlignment="Left"></Button>
+        <Button Name="RotateCounterClockWise" Height="45" Width="45" Background="Gray" Content="CC" Grid.Row="2" HorizontalAlignment="Right"></Button>
     </Grid>
 </Window>

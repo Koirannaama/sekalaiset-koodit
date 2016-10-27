@@ -14,12 +14,9 @@ open GraphicalElements
 
 type MainView = XAML<"MainWindow.xaml">
 
-type MainViewModel() as self = 
-    inherit ViewModelBase()  
+// TODO: Liitä kiertonapit vuohon
 
-type SquareClick = SquareClick of int * int
 type Square = KnownSquare of Polygon | Unknown
-type ShipInMap = ShipInMap of Coordinate
 
 let private mouseMoveStream (squares: Polygon list) (canvas:Canvas) =
     let getEnterStreamFromPoly (poly:Polygon) = poly.MouseEnter |> Observable.map (fun _ -> KnownSquare poly)
@@ -49,7 +46,8 @@ let private removeShips ships (canvas:Canvas) =
 
 let private createShipPolygons sideLength ships (canvas:Canvas) =
     ships
-    |> List.map (fun (ShipInMap(Coordinate(x,y))) -> ship(sideLength) |> drawPolygon (float(x)*sideLength) (float(y)*sideLength))
+    |> List.map (fun (ShipModel(Coordinate(x,y), _)) -> ship(sideLength) 
+                                                        |> drawPolygon (float(x)*sideLength) (float(y)*sideLength))
 
 let private createMoveStream sideLength (canvas:Canvas) initPolys moveEvent =
     let addShipToCanvas = addPolyToCanvas canvas
@@ -73,7 +71,7 @@ let private setSquareColor prevSquare newSquare =
 let private squareClickStream (mv: MainView) sideLength =
   mv.BackgroundCanvas.MouseDown
   |> Observable.map (fun e -> let p = e.GetPosition(mv.BackgroundCanvas)
-                              SquareClick(p.X / sideLength |> int, p.Y / sideLength |> int))
+                              SquareClick <| Coordinate(p.X / sideLength |> int, p.Y / sideLength |> int))
 
 let initMainView (sideLength:float) initShips =
     let mv = MainView()

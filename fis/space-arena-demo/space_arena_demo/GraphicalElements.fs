@@ -4,6 +4,7 @@ open System.Windows
 open System.Windows.Media
 open System.Windows.Controls
 open System.Windows.Shapes
+open GlobalTypes
 
 
 let private squarePoints(sideLength) =
@@ -20,17 +21,29 @@ let square(sideLength) =
                 StrokeThickness=2.0,
                 Fill=Brushes.Transparent)
 
+let private orientationToAngle o =
+    match o with
+    | N -> 0.0
+    | E -> 90.0
+    | S -> 180.0
+    | W -> 270.0
+
+let private createRotation angle =
+    new RotateTransform(angle)
+
+let private orientationToRotation o =
+    orientationToAngle >> createRotation
+
 let ship(squareSideLength) =
     let top = 0.2 * squareSideLength
     let left = 0.2 * squareSideLength
     let bottom = 0.8 * squareSideLength
     let right = 0.8 * squareSideLength
     let mid = 0.5 * squareSideLength
-//    new Polygon(Points=new PointCollection([new Point(0.0,0.0); 
-//                                            new Point(15.0,0.0);
-//                                            new Point(0.0,15.0)]),
+    let rotate = new RotateTransform(90.0, mid, mid)
     new Polygon(Points=new PointCollection([new Point(mid, top); 
                                             new Point(left, bottom);
                                             new Point(right, bottom)]),
                 Stroke=Brushes.Aqua,
-                Fill=Brushes.Beige)
+                Fill=Brushes.Beige,
+                RenderTransform=rotate)

@@ -4,6 +4,7 @@ open System
 open FsXaml
 open ViewModels
 open GlobalTypes
+open Model
 
 type App = XAML<"App.xaml">
 
@@ -11,15 +12,15 @@ type App = XAML<"App.xaml">
 [<EntryPoint>]
 let main argv =
     let initCoord = Coordinate (2, 3)
-    let ship = ShipModel initCoord
-    let (mv, clickStream,  createMoveStream) = initMainView 50.0 ((ShipInMap initCoord) |> List.singleton)
+    let ship = ShipModel (initCoord, E)
+    let (mv, clickStream,  createMoveStream) = initMainView 50.0 (ship |> List.singleton)
     clickStream
-    |> Observable.subscribe (fun (SquareClick(x, y)) -> mv.TestLabel.Content <- sprintf "%i, %i" x y)
+    |> Observable.subscribe (fun (SquareClick(Coordinate(x, y))) -> mv.TestLabel.Content <- sprintf "%i, %i" x y)
     |> ignore
 
     clickStream
-    |> Observable.scan (fun (ShipModel(c)) (SquareClick(x,y)) ->  Coordinate (x,y) |> ShipModel) ship
-    |> Observable.map (fun (ShipModel(c)) -> ShipInMap c |> List.singleton)
+    |> Observable.scan updateModel ship
+    |> Observable.map List.singleton
     |> createMoveStream
     |> ignore
     App().Run(mv)
