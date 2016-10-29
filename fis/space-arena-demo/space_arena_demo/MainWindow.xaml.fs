@@ -1,4 +1,4 @@
-﻿module ViewModels
+﻿module View
 
 open System
 open System.Windows
@@ -13,8 +13,6 @@ open GlobalTypes
 open GraphicalElements
 
 type MainView = XAML<"MainWindow.xaml">
-
-// TODO: Liitä kiertonapit vuohon
 
 type Square = KnownSquare of Polygon | Unknown
 
@@ -46,16 +44,18 @@ let private removeShips ships (canvas:Canvas) =
 
 let private createShipPolygons sideLength ships (canvas:Canvas) =
     ships
-    |> List.map (fun (ShipModel(Coordinate(x,y), _)) -> ship(sideLength) 
+    |> List.map (fun (ShipModel(Coordinate(x,y), o)) -> ship sideLength o 
                                                         |> drawPolygon (float(x)*sideLength) (float(y)*sideLength))
 
 let private createMoveStream sideLength (canvas:Canvas) initPolys moveEvent =
     let addShipToCanvas = addPolyToCanvas canvas
 
     moveEvent
-    |> Observable.scan ( fun shipPolys shipData -> removeShips shipPolys canvas |> createShipPolygons sideLength shipData) initPolys
+    |> Observable.scan ( fun shipPolys shipData -> removeShips shipPolys canvas 
+                                                   |> createShipPolygons sideLength shipData) initPolys
     |> Observable.subscribe (fun shipPolys -> List.iter addShipToCanvas shipPolys)
 
+// TODO: refaktoroi värinvaihtoa GraphicalElementsiin
 let private setSquareColor prevSquare newSquare =
     let setColor square color =
         match square with
@@ -68,10 +68,20 @@ let private setSquareColor prevSquare newSquare =
         do setColor prevSquare Brushes.Black
            setColor newSquare Brushes.Aqua
 
-let private squareClickStream (mv: MainView) sideLength =
-  mv.BackgroundCanvas.MouseDown
-  |> Observable.map (fun e -> let p = e.GetPosition(mv.BackgroundCanvas)
-                              SquareClick <| Coordinate(p.X / sideLength |> int, p.Y / sideLength |> int))
+let private gameBoardEventStream (mv: MainView) sideLength =
+    let toCoord n = n / sideLength |> int
+    let clickStream = mv.BackgroundCanvas.MouseDown
+                        |> Observable.map (fun e -> let p = e.GetPosition(mv.BackgroundCanvas)
+                                                    SquareClick <| Coordinate(toCoord p.X, toCoord p.Y))
+
+    let rotateClockewiseStream = mv.RotateClockWise.Click
+                                 |> Observable.map (fun _ -> RotateClick Clockwise)
+    let rotateCounterClockwiseStream = mv.RotateCounterClockWise.Click
+                                       |> Observable.map (fun _ -> RotateClick CounterClockwise)
+
+    clickStream
+    |> Observable.merge rotateClockewiseStream
+    |> Observable.merge rotateCounterClockwiseStream
 
 let initMainView (sideLength:float) initShips =
     let mv = MainView()
@@ -93,5 +103,5 @@ let initMainView (sideLength:float) initShips =
        List.iter (addPolyToCanvas mv.BackgroundCanvas) initShipPolys
        List.iter (addPolyToCanvas mv.BackgroundCanvas) squares
         
-    (mv, squareClickStream mv sideLength, createMoveStream sideLength mv.BackgroundCanvas initShipPolys)
+    (mv, gameBoardEventStream mv sideLength, createMoveStream sideLength mv.BackgroundCanvas initShipPolys)
 

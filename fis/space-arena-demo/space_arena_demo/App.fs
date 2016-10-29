@@ -2,7 +2,7 @@
 
 open System
 open FsXaml
-open ViewModels
+open View
 open GlobalTypes
 open Model
 
@@ -12,13 +12,10 @@ type App = XAML<"App.xaml">
 [<EntryPoint>]
 let main argv =
     let initCoord = Coordinate (2, 3)
-    let ship = ShipModel (initCoord, E)
-    let (mv, clickStream,  createMoveStream) = initMainView 50.0 (ship |> List.singleton)
-    clickStream
-    |> Observable.subscribe (fun (SquareClick(Coordinate(x, y))) -> mv.TestLabel.Content <- sprintf "%i, %i" x y)
-    |> ignore
+    let ship = ShipModel (initCoord, W)
+    let (mv, gameBoardStream,  createMoveStream) = initMainView 50.0 (ship |> List.singleton)
 
-    clickStream
+    gameBoardStream
     |> Observable.scan updateModel ship
     |> Observable.map List.singleton
     |> createMoveStream

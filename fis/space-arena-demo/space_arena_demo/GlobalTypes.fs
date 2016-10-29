@@ -13,7 +13,7 @@ let clockwise o =
     | S -> W
     | W -> N
 
-let counterClocwise o =
+let counterClockwise o =
     match o with
     | N -> W
     | E -> N

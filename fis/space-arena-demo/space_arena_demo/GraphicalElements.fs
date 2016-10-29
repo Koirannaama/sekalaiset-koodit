@@ -28,19 +28,19 @@ let private orientationToAngle o =
     | S -> 180.0
     | W -> 270.0
 
-let private createRotation angle =
-    new RotateTransform(angle)
+let private createRotation angle centerX centerY =
+    new RotateTransform(angle, centerX, centerY)
 
-let private orientationToRotation o =
+let private orientationToRotation =
     orientationToAngle >> createRotation
 
-let ship(squareSideLength) =
+let ship squareSideLength orientation =
     let top = 0.2 * squareSideLength
     let left = 0.2 * squareSideLength
     let bottom = 0.8 * squareSideLength
     let right = 0.8 * squareSideLength
     let mid = 0.5 * squareSideLength
-    let rotate = new RotateTransform(90.0, mid, mid)
+    let rotate = orientationToRotation orientation mid mid
     new Polygon(Points=new PointCollection([new Point(mid, top); 
                                             new Point(left, bottom);
                                             new Point(right, bottom)]),

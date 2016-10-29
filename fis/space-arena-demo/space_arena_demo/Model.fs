@@ -5,9 +5,9 @@ open GlobalTypes
 
 let private isMoveLegal deltaX deltaY orientation =
     match orientation with
-    | N -> deltaX = 0 && deltaY = 1
+    | N -> deltaX = 0 && deltaY = -1
     | W -> deltaX = -1 && deltaY = 0
-    | S -> deltaX = 0 && deltaY = -1
+    | S -> deltaX = 0 && deltaY = 1
     | E -> deltaX = 1 && deltaY = 0
 
 let private updateShipPosition ((ShipModel(Coordinate(x1,y1), o)) as model) ((Coordinate(x2,y2)) as newCoord) =
@@ -18,7 +18,12 @@ let private updateShipPosition ((ShipModel(Coordinate(x1,y1), o)) as model) ((Co
     else
         model
 
+let private turnShip (ShipModel(c,o)) rotatation =
+    match rotatation with
+    | Clockwise -> ShipModel (c, (clockwise o))
+    | CounterClockwise -> ShipModel (c, (counterClockwise o))
+
 let updateModel (model:ShipModel) (event:GameBoardEvent) =
     match event with
     | SquareClick c -> updateShipPosition model c
-    | RotateClick _ -> model
+    | RotateClick r -> turnShip model r
