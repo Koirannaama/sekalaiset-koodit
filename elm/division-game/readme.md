@@ -1,0 +1,1 @@
+"Hauska" pelintynkä, jossa pitää keksiä annetun luvun joku jakaja.
