@@ -1,0 +1,76 @@
+body {
+  font-family: sans-serif;
+}
+
+.main-container {
+  margin: auto;
+  width: 40%;
+  min-width: 250px;
+}
+
+.stop-search {
+  padding: 10px;
+  background-color: rgb(194, 252, 146);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.search-prompt {
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 18px;
+  font-family: "Tahoma", sans-serif;
+}
+
+.stop-input {
+  width: 150px;
+  height: 25px;
+  font-size: 16px;
+  border-style: none;
+  border-radius: 2px;
+}
+
+.search-button {
+  height: 35px;
+  font-size: 16px;
+  border-style: solid;
+  border-radius: 2px;
+  border-color: rgb(182, 214, 156);
+}
+
+.search-button:hover {
+  background-color: rgb(182, 214, 156);
+}
+
+.arrival-data {
+  background-color: rgb(215, 226, 206);
+  height: 300px;
+}
+
+.arrival-list {
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 10px;
+  border-spacing: 0;
+}
+
+th, td {
+  padding: 3px 10px 3px 10px;
+  text-align: center;
+  font-size: 18px;
+  font-family: "Verdana", sans-serif;
+}
+
+.table-item-right {
+  border-left-color: rgb(18, 89, 0);
+  border-left-style: solid;
+  border-left-width: 2px;
+}
+
+th {
+  color: rgb(18, 89, 0);
+  border-bottom-color: rgb(18, 89, 0);
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+}

@@ -1,0 +1,1 @@
+Pysäkkiaikatauluhärpäke, lähinnä Angulariin tutustumista varten.
