@@ -1,0 +1,26 @@
+<div class="main-container" ng-controller="BusController as controller">
+  <form class="stop-search" ng-submit="controller.submitRequest()">
+    <span class="search-prompt">Hae pysäkki: </span>
+    <input class="stop-input" list="stops" ng-model="controller.shadowStopName" size=30>
+    <datalist id="stops" class="stop-list">
+      <option ng-repeat="(key,val) in controller.stops" value="{{ key }}"></option>
+    </datalist>
+    <input class="search-button" type="submit" value="Hae">
+  </form>
+
+  <div class="arrival-data">
+    <div class="error-text">
+      {{ controller.errorText }}
+    </div>
+    <table class="arrival-list">
+      <tr>
+        <th>Linja</th>
+        <th>Aika saapumiseen</th>
+      </tr>
+      <tr ng-repeat="arrival in controller.arrivalTimes">
+        <td class="table-item-left">{{ arrival.line }}</td>
+        <td class="table-item-right">{{ arrival.time }}</td>
+      </tr>
+    </table>
+  </div>
+</div>

@@ -3,37 +3,15 @@
   <head>
     <meta charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
     <script type="text/javascript" src="bussit.js"></script>
+    <script type="text/javascript" src="monitor-controller.js"></script>
     <link rel="stylesheet" href="style.css">
     <title></title>
   </head>
   <body>
-    <div class="main-container" ng-controller="BusController as controller">
-      <form class="stop-search" ng-submit="controller.submitRequest()">
-        <span class="search-prompt">Hae pysäkki: </span>
-        <!--<input class="stop-input" type="text" ng-model="controller.stopCode" size=30>-->
-        <input class="stop-input" list="stops" ng-model="controller.shadowStopName" size=30>
-        <datalist id="stops" class="stop-list">
-          <option ng-repeat="(key,val) in controller.stops" value="{{ key }}"></option>
-        </datalist>
-        <input class="search-button" type="submit" value="Hae">
-      </form>
+    <div class="ng-view">
 
-      <div class="arrival-data">
-        <div class="error-text">
-          {{ controller.errorText }}
-        </div>
-        <table class="arrival-list">
-          <tr>
-            <th>Linja</th>
-            <th>Aika saapumiseen</th>
-          </tr>
-          <tr ng-repeat="arrival in controller.arrivalTimes">
-            <td class="table-item-left">{{ arrival.line }}</td>
-            <td class="table-item-right">{{ arrival.time }}</td>
-          </tr>
-        </table>
-      </div>
     </div>
   </body>
 </html>
