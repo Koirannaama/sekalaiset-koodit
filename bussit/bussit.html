@@ -9,9 +9,13 @@
   </head>
   <body>
     <div class="main-container" ng-controller="BusController as controller">
-      <form class="stop-search" ng-submit="controller.getArrivalTimes()">
+      <form class="stop-search" ng-submit="controller.submitRequest()">
         <span class="search-prompt">Hae pysäkki: </span>
-        <input class="stop-input" type="text" ng-model="controller.stopCode" size=30>
+        <!--<input class="stop-input" type="text" ng-model="controller.stopCode" size=30>-->
+        <input class="stop-input" list="stops" ng-model="controller.shadowStopName" size=30>
+        <datalist id="stops" class="stop-list">
+          <option ng-repeat="(key,val) in controller.stops" value="{{ key }}"></option>
+        </datalist>
         <input class="search-button" type="submit" value="Hae">
       </form>
 
