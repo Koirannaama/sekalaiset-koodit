@@ -1,8 +1,8 @@
-<div class="main-container" ng-controller="BusController as controller">
+<div class="main-container" ng-controller="busController as controller">
   <form class="stop-search" ng-submit="controller.submitRequest()">
     <span class="search-prompt">Hae pysäkki: </span>
     <input class="stop-input" list="stops" ng-model="controller.shadowStopName" size=30>
-    <datalist id="stops" class="stop-list">
+    <datalist id="stops" class="stop-suggestion-list">
       <option ng-repeat="(key,val) in controller.stops" value="{{ key }}"></option>
     </datalist>
     <input class="search-button" type="submit" value="Hae">
@@ -23,4 +23,5 @@
       </tr>
     </table>
   </div>
+  <a href="#!stops">Pysäkit</a>
 </div>

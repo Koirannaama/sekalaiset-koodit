@@ -45,7 +45,7 @@ body {
 
 .arrival-data {
   background-color: rgb(215, 226, 206);
-  height: 300px;
+  min-height: 300px;
 }
 
 .arrival-list {
@@ -73,4 +73,13 @@ th {
   border-bottom-color: rgb(18, 89, 0);
   border-bottom-style: solid;
   border-bottom-width: 2px;
+}
+
+.show-route-stop-link {
+  display: block;
+}
+
+.stop-list {
+  display: inline-block;
+  vertical-align: top;
 }

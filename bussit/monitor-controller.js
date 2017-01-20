@@ -40,35 +40,31 @@ function getArrivals(arrivalData) {
   }
 }
 
-app.controller("BusController", function ($http, $interval) {
+app.controller("busController", function ($http, $interval, stopNames) {
+    'use strict';
     var arrivals = this;
     arrivals.stops = {};
 
-    var stopsApiUrl = "http://data.itsfactory.fi/journeys/api/1/stop-points";
     var arrivalApiUrl = "http://data.itsfactory.fi/journeys/api/1/stop-monitoring?stops=";
-    $http.get(stopsApiUrl)
-    .then(function(res) {
-      var stopData = res.data.body;
-      stopData.forEach(function(stop) {
-        arrivals.stops[stop.name] = stop.shortName;
-      });
+    stopNames.stopNamePromise
+    .then(function(stops) {
+      arrivals.stops = stops;
+      arrivals.getArrivalTimes();
     });
 
-    //arrivals.arrivalApiUrl = "http://data.itsfactory.fi/journeys/api/1/stop-monitoring?stops=";
-    arrivals.stopName = "Sammonkatu 47";
-    arrivals.shadowStopName = arrivals.stopName;
+    arrivals.shadowStopName = stopNames.currentStop;
     arrivals.errorText = "";
 
     arrivals.submitRequest = function() {
-      arrivals.stopName = arrivals.shadowStopName;
+      stopNames.currentStop = arrivals.shadowStopName;
       arrivals.getArrivalTimes();
     };
 
     arrivals.getArrivalTimes = function() {
-      if (arrivals.stops[arrivals.stopName] === undefined) {
+      if (arrivals.stops[stopNames.currentStop] === undefined) {
         return;
       }
-      var stopCode = arrivals.stops[arrivals.stopName];
+      var stopCode = arrivals.stops[stopNames.currentStop];
 
       $http.get(arrivalApiUrl + stopCode)
       .then(function(res) {
@@ -85,8 +81,7 @@ app.controller("BusController", function ($http, $interval) {
       });
     };
 
-    arrivals.getArrivalTimes();
-    interval = $interval(function() {
+    var interval = $interval(function() {
       arrivals.getArrivalTimes();
     }, 3000);
 
