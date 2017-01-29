@@ -40,7 +40,7 @@ function getArrivals(arrivalData) {
   }
 }
 
-app.controller("busController", function ($http, $interval, stopNames) {
+app.controller("monitorController", function ($http, $interval, stopNames) {
     'use strict';
     var arrivals = this;
     arrivals.stops = {};
@@ -48,7 +48,14 @@ app.controller("busController", function ($http, $interval, stopNames) {
     var arrivalApiUrl = "http://data.itsfactory.fi/journeys/api/1/stop-monitoring?stops=";
     stopNames.stopNamePromise
     .then(function(stops) {
-      arrivals.stops = stops;
+      function getDisplayName(name, code) {
+        return name + " (" + code + ")";
+      }
+
+      for (var stop in stops) {
+        var displayName = getDisplayName(stops[stop], stop);
+        arrivals.stops[displayName] = stop;
+      }
       arrivals.getArrivalTimes();
     });
 
