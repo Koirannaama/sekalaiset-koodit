@@ -27,7 +27,7 @@ app.service("stopNames", function($http) {
   this.currentStop = "Sammonkatu 47";
 });
 
-app.service("routes", function($http) {
+app.service("lineStopLists", function($http) {
   var linesUrl = "http://data.itsfactory.fi/journeys/api/1/lines";
 
   this.lineStopListsPromise = $http.get(linesUrl).then(function(res) {
@@ -46,7 +46,7 @@ app.service("routes", function($http) {
   function getStopListsForLine(line) {
     var journeyUrl = "http://data.itsfactory.fi/journeys/api/1/journeys?lineId=" + line;
     var lineStopListsPromise = $http.get(journeyUrl).then(function(res) {
-      function getJourneyByDirection(js, j) {
+      function divideJourneysByDirection(js, j) {
         var dir = j.directionId;
         if (dir in js) {
           js[dir].push(j);
@@ -73,21 +73,79 @@ app.service("routes", function($http) {
         return stops;
       }
 
-      function getStopList(journeys) {
-        if (journeys === undefined) {
-          return [];
+      function getStopLists(journeysByDirection) {
+        function getStopsForLongestJourney(journeys) {
+          var longestJourney = journeys.reduce(getLongestJourney);
+          return getStopsFromJourney(longestJourney);
         }
-        var longestJourney = journeys.reduce(getLongestJourney);
-        return getStopsFromJourney(longestJourney);
+
+        var stopLists = Object.keys(journeysByDirection).map(function(directionId) {
+          return getStopsForLongestJourney(journeysByDirection[directionId]);
+        });
+        return stopLists;
       }
 
       var journeys = res.data.body;
-      var dividedJourneys = journeys.reduce(getJourneyByDirection, {});
-
-      var journeyToStops = getStopList(dividedJourneys["0"]);
-      var journeyFroStops = getStopList(dividedJourneys["1"]);
-      return {route1:journeyToStops, route2:journeyFroStops};
+      var dividedJourneys = journeys.reduce(divideJourneysByDirection, {});
+      return getStopLists(dividedJourneys);
     });
     return lineStopListsPromise;
+  }
+});
+
+app.service("arrivalTimes", function($http) {
+  this.getArrivalTimes = getArrivalTimesForStop;
+
+  function getArrivalTimesForStop(stopCode) {
+    var arrivalApiUrl = "http://data.itsfactory.fi/journeys/api/1/stop-monitoring?stops=";
+    var arrivalTimesPromise = $http.get(arrivalApiUrl + stopCode)
+    .then(function(res) {
+      var arrivalData = res.data.body[stopCode];
+      var arrivalTimes = getArrivals(arrivalData);
+      return arrivalTimes;
+    });
+    return arrivalTimesPromise;
+
+    function getTimeUntil(date) {
+      var d = Date.parse(date);
+      var diff = d - Date.now();
+      return Math.floor(diff / (1000*60));
+    }
+
+    function createArrivalObject(arrival) {
+      var line = arrival.lineRef;
+      var time = arrival.call.expectedArrivalTime;
+      return { line:line, time:getTimeUntil(time) };
+    }
+
+    function hasNotAlreadyDeparted(arrival) {
+      return arrival.time >= 0;
+    }
+
+    function parseArrivalData(arrivalData) {
+      var arrivals = arrivalData
+        .filter(function(arrival) {
+          return !arrival.call.vehicleAtStop;
+        })
+        .map(function(arrival) {
+          return createArrivalObject(arrival);
+        })
+        .sort(function(a1, a2) {
+          return a1.time - a2.time;
+        })
+        .filter(function(arrival) {
+          return hasNotAlreadyDeparted(arrival);
+        });
+      return arrivals;
+    }
+
+    function getArrivals(arrivalData) {
+      if (arrivalData === undefined) {
+        return [];
+      }
+      else {
+        return parseArrivalData(arrivalData);
+      }
+    }
   }
 });

@@ -1,0 +1,17 @@
+<div class="stop-info-container" ng-controller="stopInfoController as stopCntrl">
+  <div class="routes" >
+    <ul class="line-list stop-info-list">
+      <li class="route-list-item" ng-repeat="(key,val) in stopCntrl.routes">
+        <a class="show-route-stops-link" href="" ng-click="stopCntrl.showRouteStops(key)">{{ key }}</a>
+      </li>
+    </ul>
+    <div class="stop-list-container stop-info-list">
+      <ul class="stop-list stop-info-list" ng-repeat="stopList in stopCntrl.displayedStops">
+        <li ng-repeat="routeStop in stopList">
+          {{ routeStop.name }} ( {{ routeStop.code }} )
+        </li>
+      </ul>
+    </div>
+  </div>
+ <a href="#!/">Monitori</a>
+</div>

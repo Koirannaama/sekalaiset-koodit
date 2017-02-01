@@ -1,98 +1,53 @@
-function getTimeUntil(date) {
-  var d = Date.parse(date);
-  var diff = d - Date.now();
-  return Math.floor(diff / (1000*60));
-}
-
-function createArrivalObject(arrival) {
-  var line = arrival.lineRef;
-  var time = arrival.call.expectedArrivalTime;
-  return { line:line, time:getTimeUntil(time) };
-}
-
-function hasNotAlreadyDeparted(arrival) {
-  return arrival.time >= 0;
-}
-
-function parseArrivalData(arrivalData) {
-  var arrivals = arrivalData
-    .filter(function(arrival) {
-      return !arrival.call.vehicleAtStop;
-    })
-    .map(function(arrival) {
-      return createArrivalObject(arrival);
-    })
-    .sort(function(a1, a2) {
-      return a1.time - a2.time;
-    })
-    .filter(function(arrival) {
-      return hasNotAlreadyDeparted(arrival);
-    });
-  return arrivals;
-}
-
-function getArrivals(arrivalData) {
-  if (arrivalData === undefined) {
-    return [];
-  }
-  else {
-    return parseArrivalData(arrivalData);
-  }
-}
-
-app.controller("monitorController", function ($http, $interval, stopNames) {
+app.controller("monitorController", function ($interval, stopNames, arrivalTimes) {
     'use strict';
-    var arrivals = this;
-    arrivals.stops = {};
+    var monitor = this;
+    monitor.stops = {};
+    monitor.shadowStopName = stopNames.currentStop;
+    monitor.errorText = "";
+    monitor.submitRequest = submitArrivalRequest;
 
-    var arrivalApiUrl = "http://data.itsfactory.fi/journeys/api/1/stop-monitoring?stops=";
     stopNames.stopNamePromise
-    .then(function(stops) {
+    .then(function(stopNames) {
       function getDisplayName(name, code) {
         return name + " (" + code + ")";
       }
 
-      for (var stop in stops) {
-        var displayName = getDisplayName(stops[stop], stop);
-        arrivals.stops[displayName] = stop;
+      for (var stop in stopNames) {
+        var displayName = getDisplayName(stopNames[stop], stop);
+        monitor.stops[displayName] = stop;
       }
-      arrivals.getArrivalTimes();
+      getArrivalTimes();
     });
 
-    arrivals.shadowStopName = stopNames.currentStop;
-    arrivals.errorText = "";
+    function submitArrivalRequest() {
+      stopNames.currentStop = monitor.shadowStopName;
+      getArrivalTimes();
+    }
 
-    arrivals.submitRequest = function() {
-      stopNames.currentStop = arrivals.shadowStopName;
-      arrivals.getArrivalTimes();
-    };
-
-    arrivals.getArrivalTimes = function() {
-      if (arrivals.stops[stopNames.currentStop] === undefined) {
+    function getArrivalTimes() {
+      if (monitor.stops[stopNames.currentStop] === undefined) {
         return;
       }
-      var stopCode = arrivals.stops[stopNames.currentStop];
+      var stopCode = monitor.stops[stopNames.currentStop];
 
-      $http.get(arrivalApiUrl + stopCode)
-      .then(function(res) {
-        var arrivalData = res.data.body[stopCode];
-        var arrivalTimes = getArrivals(arrivalData);
+      arrivalTimes.getArrivalTimes(stopCode)
+      .then(function(arrivals) {
         if (arrivals.length === 0) {
-          arrivals.arrivalTimes = [];
-          arrivals.errorText = "Ei löytynyt aikoja.";
+          monitor.arrivalTimes = [];
+          monitor.errorText = "Ei löytynyt aikoja.";
         }
         else {
-          arrivals.arrivalTimes = arrivalTimes;
-          arrivals.errorText = "";
+          monitor.arrivalTimes = arrivals;
+          monitor.errorText = "";
         }
       });
-    };
+    }
 
     var interval = $interval(function() {
-      arrivals.getArrivalTimes();
+      getArrivalTimes();
     }, 3000);
 
-    arrivals.$onDestroy = function() {
+    monitor.$onDestroy = function() {
       $interval.cancel(interval);
     };
   });
