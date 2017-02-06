@@ -7,6 +7,7 @@ body {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+  border-radius: 20px;
   padding-top: 50px;
   margin-top: 50px;
   font-family: sans-serif;
@@ -14,24 +15,28 @@ body {
   height: 300px;
 }
 
-#greeting {
+.greeting {
   font-size: 40px;
   font-family: 'Fugaz One', sans-serif;
 
 }
 
-#greeting2 {
+.greeting2 {
   font-size: 12px;
   margin-bottom: 15px;
 }
 
-#points {
+.points {
   font-size: 20px;
   color: gray;
 }
 
-#number {
+.number {
   font-size: 28px;
   margin-top: 5px;
   margin-bottom: 20px;
+}
+
+.msg-display {
+  height: 20px;
 }

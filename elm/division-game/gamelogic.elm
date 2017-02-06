@@ -1,6 +1,9 @@
-module GameLogic exposing (getResult, GuessResult(..))
+module GameLogic exposing (getResult, GuessResult(..), randomNumCmd)
 
 import Arithmetic exposing (isPrime)
+import Platform.Cmd exposing (Cmd, none)
+import Random
+import Global exposing (Msg)
 
 type GuessResult =
   Prime
@@ -9,13 +12,17 @@ type GuessResult =
   | Trivial
   | Wrong
 
-getResult : Int -> Int -> Int -> (GuessResult, Int)
+randomNumCmd : Cmd Msg
+randomNumCmd = Random.generate Global.RandomNum (Random.int 1 100)
+
+getResult : Int -> Int -> Int -> (GuessResult, Int, Cmd Msg)
 getResult answer number currentPoints =
   let
     result = getGuessResult answer number
     points = getPointsForResult result currentPoints
+    command = getCommandForResult result
   in
-  (result, points)
+  (result, points, command)
 
 isAnswerCorrect : Int -> Int -> Bool
 isAnswerCorrect answer number =
@@ -46,3 +53,12 @@ getPointsForResult result currentPoints =
     Even -> 1 + currentPoints
     Trivial -> currentPoints
     Wrong -> 0
+
+getCommandForResult : GuessResult -> Cmd Msg
+getCommandForResult result =
+  case result of
+    Prime -> randomNumCmd
+    Odd -> randomNumCmd
+    Even -> randomNumCmd
+    Trivial -> Cmd.none
+    Wrong -> randomNumCmd
