@@ -1,12 +1,10 @@
 module Scores exposing (getHighScores)
 
-import Http exposing (send, getString, Error, request, emptyBody, expectString)
-import Json.Decode as Decode
+import Http exposing (send, getString, Error, request, emptyBody, expectString, expectJson)
+import Json.Decode as Decode exposing (keyValuePairs, int, field, map)
 import Global exposing (Msg)
 import Debug exposing (log)
 import Time exposing (millisecond, Time)
-
-
 
 getHighScores : Cmd Msg
 getHighScores =
@@ -16,21 +14,22 @@ getHighScores =
                    , headers = []
                    , url = "http://localhost:8081"
                    , body = Http.emptyBody
-                   , expect = Http.expectString --vaihda JSONiin kun tulee oikeeta dataa
+                   , expect = Http.expectJson parseScores
                    , timeout = Just (500*millisecond)
                    , withCredentials = False
                    }
   in
     Http.send processResult request
 
-processResult : Result Http.Error String -> Msg
+processResult : Result Http.Error (List (String, Int)) -> Msg
 processResult result =
   case result of
     Ok scores ->
-      Global.HighScores [(scores, 1)]
+      Global.HighScores scores
     Err _ ->
       Global.HighScores [("Error", 1)]
 
-parseScores : Decode.Decoder String
+parseScores : Decode.Decoder (List (String, Int))
 parseScores =
-  Decode.string
+    Decode.field "scores" (Decode.list (Decode.keyValuePairs Decode.int))
+    |> Decode.map List.concat
