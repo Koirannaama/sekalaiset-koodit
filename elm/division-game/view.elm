@@ -2,8 +2,8 @@ module View exposing (view, Message(..), getMessageForResult)
 
 import Html.Events exposing (onInput)
 import Html.Attributes exposing (value, placeholder, class, classList)
-import Html exposing (Html, div, input, text, p, table, tr, td)
-import Global exposing (Msg)
+import Html exposing (Html, div, input, text, p, table, tr, td, th)
+import Global exposing (Msg, Score, comparePoints)
 import GameLogic exposing (GuessResult)
 
 type Message =
@@ -33,25 +33,33 @@ messageDisplay msg =
   in
     div [ classList classes ] [ text msgText ]
 
-highScoreDisplay : (List (String, Int)) -> Html a
+highScoreDisplay : (List Score) -> Html a
 highScoreDisplay scores =
   let
-    row (name, score) = tr []
-      [ td [] [ text name ], td [] [ text (toString score)] ]
-    rows = List.map row scores
+    sortedScores = List.sortWith Global.comparePoints scores
+    row (name, score) = tr [ class "score-row" ]
+      [ td [ class "name-cell" ] [ text name ]
+      , td [ class "points-cell" ] [ text (toString score)]
+      ]
+    rows = List.map row sortedScores
+    header = th [ class "highscore-header" ] []
   in
-    table [] rows
+    table [ class "highscore-table" ] (header :: header :: rows)
 
 view model =
   div []
-    [ div [ class "greeting" ] [ text "Guess a divisor of" ]
-    , div [ class "greeting2"] [ text "(press Enter to submit)" ]
-    , div [ class "number" ] [ text (toString model.randomNum) ]
-    , input [ onInput Global.InputMsg, value model.input, placeholder "Enter 0 if it's a prime" ] []
-    , messageDisplay model.message
-    , scoreDisplay model.result model.highscore
-    , highScoreDisplay model.highscores
+    [ div [ class "game-container"]
+        [ div [ class "greeting" ] [ text "Guess a divisor of" ]
+        , div [ class "greeting2"] [ text "(press Enter to submit)" ]
+        , div [ class "number" ] [ text (toString model.randomNum) ]
+        , input [ onInput Global.InputMsg, value model.input, placeholder "Enter 0 if it's a prime" ] []
+        , messageDisplay model.message
+        , scoreDisplay model.result model.highscore
+        ]
+    , div [ class "highscore-container"]
+        [ highScoreDisplay model.highscores ]
     ]
+
 
 getMessageForResult : GameLogic.GuessResult -> Message
 getMessageForResult result =

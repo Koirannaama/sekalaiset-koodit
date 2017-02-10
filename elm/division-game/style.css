@@ -1,19 +1,20 @@
 body {
-  background-color: rgb(220,220,220);
+  background-color: rgb(200,200,200);
 }
 
-#main {
-  background-color: rgb(252,227,226);
+.game-container {
+  background-color: white/*rgb(252,227,226)*/;
   margin-left: auto;
   margin-right: auto;
-  text-align: center;
   border-radius: 20px;
   padding-top: 50px;
   margin-top: 50px;
   font-family: sans-serif;
   width: 40%;
   height: 300px;
+  text-align: center;
 }
+
 
 .greeting {
   font-size: 40px;
@@ -39,4 +40,44 @@ body {
 
 .msg-display {
   height: 20px;
+}
+
+.highscore-container {
+  width: 30%;
+  min-height: 100px;
+  background-color: white;
+  font: 14px "Trebuchet MS", sans-serif;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin: 20px auto 20px auto;
+  border-radius: 20px;
+}
+
+.highscore-table {
+  margin-left: auto;
+  margin-right: auto;
+  border-spacing: 0;
+}
+
+.name-cell {
+  text-align: right;
+  padding: 5px;
+  border-right-style: solid;
+  border-right-width: 3px;
+  border-right-color: rgb(252,227,226);
+}
+
+.points-cell {
+  text-align: left;
+  padding: 5px;
+}
+
+.score-row {
+  padding: 5px 0px 5px 0px;
+}
+
+.highscore-header {
+  border-bottom-style: solid;
+  border-bottom-width: 3px;
+  border-bottom-color: rgb(252,227,226);
 }

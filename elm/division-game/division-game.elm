@@ -4,7 +4,7 @@ import String exposing (toInt)
 import Keyboard
 import Random
 import View exposing (view, Message)
-import Global exposing (Msg)
+import Global exposing (Msg, Score)
 import GameLogic exposing (getResult, randomNumCmd)
 import Scores exposing (getHighScores)
 
@@ -14,7 +14,7 @@ type alias Model =
     randomNum: Int,
     highscore: Int,
     message: View.Message,
-    highscores: (List (String, Int))
+    highscores: (List Score)
   }
 
 
@@ -45,7 +45,7 @@ init = ({ input = "",
           randomNum = 0,
           highscore = 0,
           message = View.Empty,
-          highscores = [("asd", 2)] },
+          highscores = [] },
         Cmd.batch [ GameLogic.randomNumCmd, Scores.getHighScores ])
 
 main =
