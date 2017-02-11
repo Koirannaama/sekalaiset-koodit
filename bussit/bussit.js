@@ -14,6 +14,8 @@ app.config(function($routeProvider) {
 });
 
 app.service("stopNames", function($http) {
+  this.currentStop = "Sammonkatu 47";
+
   var stopsApiUrl = "http://data.itsfactory.fi/journeys/api/1/stop-points";
   this.stopNamePromise = $http.get(stopsApiUrl).then(function(res) {
     var stopData = res.data.body;
@@ -23,8 +25,6 @@ app.service("stopNames", function($http) {
     });
     return stops;
   });
-
-  this.currentStop = "Sammonkatu 47";
 });
 
 app.service("lineStopLists", function($http) {
@@ -36,8 +36,9 @@ app.service("lineStopLists", function($http) {
 
     lines.forEach(function(line) {
       var lineName = line.name;
+      var description = line.description;
       getStopListsForLine(lineName).then(function(lineStopLists) {
-        lineStops[lineName] = lineStopLists;
+        lineStops[lineName] = { stopLists:lineStopLists, description:description };
       });
     });
     return lineStops;
@@ -46,6 +47,10 @@ app.service("lineStopLists", function($http) {
   function getStopListsForLine(line) {
     var journeyUrl = "http://data.itsfactory.fi/journeys/api/1/journeys?lineId=" + line;
     var lineStopListsPromise = $http.get(journeyUrl).then(function(res) {
+      var journeys = res.data.body;
+      var dividedJourneys = journeys.reduce(divideJourneysByDirection, {});
+      return getStopLists(dividedJourneys);
+
       function divideJourneysByDirection(js, j) {
         var dir = j.directionId;
         if (dir in js) {
@@ -85,9 +90,7 @@ app.service("lineStopLists", function($http) {
         return stopLists;
       }
 
-      var journeys = res.data.body;
-      var dividedJourneys = journeys.reduce(divideJourneysByDirection, {});
-      return getStopLists(dividedJourneys);
+
     });
     return lineStopListsPromise;
   }

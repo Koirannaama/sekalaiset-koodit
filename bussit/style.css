@@ -2,13 +2,28 @@ body {
   font-family: sans-serif;
 }
 
-.main-container {
+ul {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.top-level {
   margin: auto;
   width: 40%;
+}
+
+.nav-bar {
+  background-color: rgb(18, 89, 0);
+  height: 45px;
+}
+
+.main-container {
   min-width: 250px;
 }
 
-.stop-search {
+.top-box {
+  height: 35px;
   padding: 10px;
   background-color: rgb(194, 252, 146);
   margin-top: 10px;
@@ -82,4 +97,43 @@ th {
 .stop-info-list {
   display: inline-block;
   vertical-align: top;
+}
+
+/*.line-list-container {
+  background-color: rgb(194, 252, 146);
+  padding: 5px;
+}*/
+
+.line-list {
+  margin-top: 8px;
+  width: 400px;
+}
+
+.show-route-stops-link {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.stop-list-box {
+  background-color: rgb(215, 226, 206);
+  padding: 10px;
+  min-height: 500px;
+  min-width: 500px;
+  font-family: "Tahoma", sans-serif;
+}
+
+.stop-list-container {
+  width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.stop-list {
+  padding: 0px 20px 0px 20px;
+}
+
+.stop-list-header {
+  text-align: center;
+  margin: 10px 0px 10px 0px;
+  color: rgb(18, 89, 0);
 }

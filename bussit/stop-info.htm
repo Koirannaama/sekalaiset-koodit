@@ -1,17 +1,23 @@
 <div class="stop-info-container" ng-controller="stopInfoController as stopCntrl">
-  <div class="routes" >
-    <ul class="line-list stop-info-list">
-      <li class="route-list-item" ng-repeat="(key,val) in stopCntrl.routes">
-        <a class="show-route-stops-link" href="" ng-click="stopCntrl.showRouteStops(key)">{{ key }}</a>
-      </li>
-    </ul>
-    <div class="stop-list-container stop-info-list">
+
+  <div class="line-list-container top-box">
+    <select class="line-list" ng-model="stopCntrl.selectedLine"
+            ng-change="stopCntrl.showRouteStops(stopCntrl.selectedLine)">
+      <option class="line-list-item" value="{{ key }}"
+              ng-repeat="(key,val) in stopCntrl.routes">{{ key }} ({{ val.description }})</option>
+    </select>
+  </div>
+
+  <div class="stop-list-box">
+    <h2 class="stop-list-header">Pysäkit</h2>
+    <div class="stop-list-container">
       <ul class="stop-list stop-info-list" ng-repeat="stopList in stopCntrl.displayedStops">
         <li ng-repeat="routeStop in stopList">
-          {{ routeStop.name }} ( {{ routeStop.code }} )
+          {{ routeStop.name }}
+          ( <a href="" ng-click="stopCntrl.selectStop(routeStop.code)">{{ routeStop.code }}</a> )
         </li>
       </ul>
     </div>
   </div>
- <a href="#!/">Monitori</a>
+
 </div>
