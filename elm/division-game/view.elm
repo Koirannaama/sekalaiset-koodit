@@ -2,7 +2,7 @@ module View exposing (view, Message(..), getMessageForResult)
 
 import Html.Events exposing (onInput)
 import Html.Attributes exposing (value, placeholder, class, classList)
-import Html exposing (Html, div, input, text, p, table, tr, td, th)
+import Html exposing (Html, div, input, text, p, table, tr, td, th, h2)
 import Global exposing (Msg, Score, comparePoints)
 import GameLogic exposing (GuessResult)
 
@@ -42,22 +42,37 @@ highScoreDisplay scores =
       , td [ class "points-cell" ] [ text (toString score)]
       ]
     rows = List.map row sortedScores
-    header = th [ class "highscore-header" ] []
+    header = th [ class "highscore-table-header" ] []
   in
     table [ class "highscore-table" ] (header :: header :: rows)
+
+instructionText : String
+instructionText = "(press Enter to submit, enter 0 if it's a prime)"
+
+greetingDisplay : Html a
+greetingDisplay =
+  div [ class "greetings" ]
+    [ div [ class "greeting" ] [ text "Guess a divisor of" ]
+    , div [ class "greeting2"] [ text instructionText ]
+    ]
+
 
 view model =
   div []
     [ div [ class "game-container"]
-        [ div [ class "greeting" ] [ text "Guess a divisor of" ]
-        , div [ class "greeting2"] [ text "(press Enter to submit)" ]
+        [ greetingDisplay
         , div [ class "number" ] [ text (toString model.randomNum) ]
-        , input [ onInput Global.InputMsg, value model.input, placeholder "Enter 0 if it's a prime" ] []
+        , input [ onInput Global.InputMsg
+                , value model.input
+                , class "guess-input"
+                ] []
         , messageDisplay model.message
         , scoreDisplay model.result model.highscore
         ]
     , div [ class "highscore-container"]
-        [ highScoreDisplay model.highscores ]
+        [ h2 [ class "highscore-header" ] [ text "Highscores!" ]
+        , highScoreDisplay model.highscores
+        ]
     ]
 
 
