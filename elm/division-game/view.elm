@@ -1,9 +1,9 @@
 module View exposing (view, Message(..), getMessageForResult)
 
-import Html.Events exposing (onInput)
+import Html.Events exposing (onInput, onClick)
 import Html.Attributes exposing (value, placeholder, class, classList)
-import Html exposing (Html, div, input, text, p, table, tr, td, th, h2)
-import Global exposing (Msg, Score, comparePoints)
+import Html exposing (Html, div, input, text, p, table, tr, td, th, h2, button)
+import Global exposing (Msg, Score, DataInputResult, comparePoints)
 import GameLogic exposing (GuessResult)
 
 type Message =
@@ -56,6 +56,29 @@ greetingDisplay =
     , div [ class "greeting2"] [ text instructionText ]
     ]
 
+nameInput : String -> Global.DataInputResult -> Html Msg
+nameInput name inputResult =
+  let
+    mainClass = ("name-input", True)
+    errorClass = ("input-error", True)
+    classes =
+      case inputResult of
+        Global.OK -> [ mainClass ]
+        Global.EmptyName -> [ mainClass, errorClass ]
+        Global.ZeroScore -> [ mainClass, errorClass ]
+  in
+    input [ onInput Global.NameInput
+          , value name
+          , classList classes ] []
+
+highscoreForm : String -> Global.DataInputResult -> Html Msg
+highscoreForm name inputResult =
+  div [ class "highscore-form" ]
+  [ text "Name: "
+  , nameInput name inputResult
+  , button [ class "submit-score-button"
+           , onClick Global.SendHighscore ] [ text "Submit score" ]
+  ]
 
 view model =
   div []
@@ -68,6 +91,7 @@ view model =
                 ] []
         , messageDisplay model.message
         , scoreDisplay model.result model.highscore
+        , highscoreForm model.name model.inputResult
         ]
     , div [ class "highscore-container"]
         [ h2 [ class "highscore-header" ] [ text "Highscores!" ]

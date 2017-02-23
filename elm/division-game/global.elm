@@ -1,4 +1,4 @@
-module Global exposing (Msg(..), Score, comparePoints)
+module Global exposing (Msg(..), Score, DataInputResult(..), comparePoints)
 
 import Keyboard
 import Http
@@ -9,6 +9,13 @@ type Msg =
   | InputMsg String
   | RandomNum Int
   | HighScores (List Score)
+  | NameInput String
+  | SendHighscore
+
+type DataInputResult =
+  OK
+  | EmptyName
+  | ZeroScore
 
 type alias Score = (String, Int)
 

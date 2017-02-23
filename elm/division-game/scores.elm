@@ -1,6 +1,6 @@
-module Scores exposing (getHighScores)
+module Scores exposing (getHighScores, submitScore)
 
-import Http exposing (send, getString, jsonBody, Error, Expect, Body, request, emptyBody, expectJson)
+import Http exposing (send, jsonBody, Error, Expect, Body, request, emptyBody, expectJson)
 import Json.Decode as Decode exposing (keyValuePairs, int, field, map)
 import Json.Encode as Encode exposing (int, object, Value)
 import Global exposing (Msg, Score)
@@ -33,9 +33,20 @@ getRequest : Http.Request (List Score)
 getRequest =
     createRequest Http.emptyBody "GET"
 
+sendScoreRequest : Http.Request (List Score) -> Cmd Msg
+sendScoreRequest =
+  Http.send processResult
+
+submitScore : Score -> Cmd Msg
+submitScore score =
+  let
+    request = postRequest score
+  in
+    sendScoreRequest request
+
 getHighScores : Cmd Msg
 getHighScores =
-   Http.send processResult getRequest
+   sendScoreRequest getRequest
 
 processResult : Result Http.Error (List Score) -> Msg
 processResult result =

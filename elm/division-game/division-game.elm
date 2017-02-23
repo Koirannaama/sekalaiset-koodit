@@ -4,7 +4,7 @@ import String exposing (toInt)
 import Keyboard
 import Random
 import View exposing (view, Message)
-import Global exposing (Msg, Score)
+import Global exposing (Msg, Score, DataInputResult)
 import GameLogic exposing (getResult, randomNumCmd)
 import Scores exposing (getHighScores)
 
@@ -14,7 +14,9 @@ type alias Model =
     randomNum: Int,
     highscore: Int,
     message: View.Message,
-    highscores: (List Score)
+    highscores: (List Score),
+    name: String,
+    inputResult: DataInputResult
   }
 
 
@@ -45,14 +47,16 @@ init = ({ input = "",
           randomNum = 0,
           highscore = 0,
           message = View.Empty,
-          highscores = [] },
+          highscores = [],
+          name = "",
+          inputResult = Global.OK },
         Cmd.batch [ GameLogic.randomNumCmd, Scores.getHighScores ])
 
 main =
   Html.program { init = init,
-                     update = update,
-                     subscriptions = subscriptions,
-                     view = view }
+                 update = update,
+                 subscriptions = subscriptions,
+                 view = view }
 
 update msg model =
   case msg of
@@ -70,6 +74,14 @@ update msg model =
       ({ model | randomNum = num }, Cmd.none)
     Global.HighScores scores ->
       ({ model | highscores = scores }, Cmd.none)
+    Global.NameInput name ->
+      ({ model | name = name, inputResult = Global.OK }, Cmd.none)
+    Global.SendHighscore ->
+      if model.highscore == 0 || model.name == "" then --implement proper handling
+        ({model | inputResult = Global.EmptyName }, Cmd.none)
+      else
+        ({model | inputResult = Global.OK },
+        Scores.submitScore (model.name, model.highscore))
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

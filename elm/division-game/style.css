@@ -11,8 +11,9 @@ body {
   margin-top: 50px;
   font-family: "Verdana", sans-serif;
   width: 40%;
-  height: 315px;
+  height: 40%;
   text-align: center;
+  min-width: 350px;
 }
 
 .greetings {
@@ -75,6 +76,7 @@ body {
   padding-bottom: 20px;
   margin: 20px auto 20px auto;
   border-radius: 20px;
+  min-width: 250px;
 }
 
 .highscore-table {
@@ -88,12 +90,14 @@ body {
   padding: 5px;
   border-right-style: solid;
   border-right-width: 3px;
-  border-right-color: rgb(252,227,226);
+  border-right-color: hsl(217, 80%, 77%);
+  width: 20px;
 }
 
 .points-cell {
   text-align: left;
   padding: 5px;
+  width: 20px;
 }
 
 .score-row {
@@ -103,9 +107,26 @@ body {
 .highscore-table-header {
   border-bottom-style: solid;
   border-bottom-width: 3px;
-  border-bottom-color: rgb(252,227,226);
+  border-bottom-color: hsl(217, 80%, 77%);
 }
 
 .highscore-header {
   text-align: center;
+}
+
+.highscore-form {
+    vertical-align: top;
+}
+
+.name-input {
+  border-radius: 2px;
+  border-style: solid;
+}
+
+.input-error {
+  border-color: hsl(352, 61%, 48%);
+}
+
+.submit-score-button {
+  margin-left: 5px;
 }
