@@ -1,4 +1,4 @@
-app.controller("stopInfoController", function (lineStopLists) {
+app.controller("stopInfoController", function ($location, lineStopLists) {
   'use strict';
   var stopInfo = this;
   stopInfo.routes = {};
@@ -17,5 +17,6 @@ app.controller("stopInfoController", function (lineStopLists) {
 
   function selectStop(stopCode) {
     console.log(stopCode);
+    $location.path(""); // siirrä serviceen
   }
 });

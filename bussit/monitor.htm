@@ -1,6 +1,6 @@
 <div ng-controller="monitorController as controller">
   <form class="stop-search top-box" ng-submit="controller.submitRequest()">
-    <span class="search-prompt">Hae pysäkki: </span>
+    <span class="prompt-text">Hae pysäkki: </span>
     <input class="stop-input" list="stops" ng-model="controller.shadowStopName">
     <datalist id="stops" class="stop-suggestion-list">
       <option ng-repeat="(key,val) in controller.stops" value="{{ key }}"></option>
@@ -8,7 +8,7 @@
     <input class="search-button" type="submit" value="Hae">
   </form>
 
-  <div class="arrival-data">
+  <div class="arrival-data content-box">
     <div class="error-text">
       {{ controller.errorText }}
     </div>
@@ -19,7 +19,13 @@
       </tr>
       <tr ng-repeat="arrival in controller.arrivalTimes">
         <td class="table-item-left">{{ arrival.line }}</td>
-        <td class="table-item-right">{{ arrival.time }}</td>
+        <td class="table-item-right">
+          <span class="time-span">{{ arrival.time }}</span>
+          <progress class="arrival-progress"
+                    value="{{ arrival.time }}"
+                    max="{{ controller.timeMax }}">
+          </progress>
+        </td>
       </tr>
     </table>
   </div>

@@ -1,6 +1,7 @@
 <div class="stop-info-container" ng-controller="stopInfoController as stopCntrl">
 
   <div class="line-list-container top-box">
+    <span class="prompt-text">Valitse linja: </span>
     <select class="line-list" ng-model="stopCntrl.selectedLine"
             ng-change="stopCntrl.showRouteStops(stopCntrl.selectedLine)">
       <option class="line-list-item" value="{{ key }}"
@@ -8,7 +9,7 @@
     </select>
   </div>
 
-  <div class="stop-list-box">
+  <div class="stop-list-box content-box">
     <h2 class="stop-list-header">Pysäkit</h2>
     <div class="stop-list-container">
       <ul class="stop-list stop-info-list" ng-repeat="stopList in stopCntrl.displayedStops">

@@ -4,6 +4,7 @@ app.controller("monitorController", function ($interval, stopNames, arrivalTimes
     monitor.stops = {};
     monitor.shadowStopName = stopNames.currentStop;
     monitor.errorText = "";
+    monitor.timeMax = 20;
     monitor.submitRequest = submitArrivalRequest;
 
     stopNames.stopNamePromise
@@ -45,7 +46,7 @@ app.controller("monitorController", function ($interval, stopNames, arrivalTimes
 
     var interval = $interval(function() {
       getArrivalTimes();
-    }, 3000);
+    }, 30000);
 
     monitor.$onDestroy = function() {
       $interval.cancel(interval);

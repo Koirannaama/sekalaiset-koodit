@@ -1,5 +1,6 @@
 body {
   font-family: sans-serif;
+  background-color: rgb(230,230,230);
 }
 
 ul {
@@ -14,8 +15,22 @@ ul {
 }
 
 .nav-bar {
-  background-color: rgb(18, 89, 0);
+  background: linear-gradient(hsl(107, 80%, 38%), hsl(107, 100%, 18%));
   height: 45px;
+}
+
+.nav-link {
+  display: inline-block;
+  font: 18px "Verdana", sans-serif;
+  color: white;
+  text-decoration: none;
+  padding: 10px 10px 0px 10px;
+  margin-left: 10px;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+  color: rgb(220,220,220);
 }
 
 .main-container {
@@ -29,9 +44,10 @@ ul {
   margin-top: 10px;
   margin-bottom: 10px;
   text-align: center;
+  box-shadow: 3px 3px 3px #888888;
 }
 
-.search-prompt {
+.prompt-text {
   padding-left: 10px;
   padding-right: 10px;
   font-size: 18px;
@@ -55,12 +71,16 @@ ul {
 }
 
 .search-button:hover {
-  background-color: rgb(182, 214, 156);
+  background-color: rgb(215, 226, 206);
 }
 
 .arrival-data {
-  background-color: rgb(215, 226, 206);
   min-height: 300px;
+}
+
+.content-box {
+  box-shadow: 3px 3px 3px #888888;
+  background-color: rgb(215, 226, 206);
 }
 
 .arrival-list {
@@ -99,11 +119,6 @@ th {
   vertical-align: top;
 }
 
-/*.line-list-container {
-  background-color: rgb(194, 252, 146);
-  padding: 5px;
-}*/
-
 .line-list {
   margin-top: 8px;
   width: 400px;
@@ -115,7 +130,6 @@ th {
 }
 
 .stop-list-box {
-  background-color: rgb(215, 226, 206);
   padding: 10px;
   min-height: 500px;
   min-width: 500px;
@@ -136,4 +150,38 @@ th {
   text-align: center;
   margin: 10px 0px 10px 0px;
   color: rgb(18, 89, 0);
+}
+
+progress::-webkit-progress-bar-value {
+  background:rgb(182, 214, 156);
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgb(18, 89, 0);
+
+}
+progress::-webkit-progress-value {
+  background:rgb(182, 214, 156);
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgb(18, 89, 0);
+
+}
+progress::-moz-progress-bar {
+  background: rgb(182, 214, 156);
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgb(18, 89, 0);
+
+}
+
+.arrival-progress[value] {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  height: 25px;
+  background-color: rgb(215, 226, 206);
+}
+
+.time-span {
+  position: absolute;
 }
