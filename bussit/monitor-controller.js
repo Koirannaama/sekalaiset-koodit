@@ -1,35 +1,46 @@
-app.controller("monitorController", function ($interval, stopNames, arrivalTimes) {
+app.controller("monitorController", function ($interval, stopNames, arrivalTimes, currentStop) {
     'use strict';
     var monitor = this;
-    monitor.stops = {};
-    monitor.shadowStopName = stopNames.currentStop;
+    monitor.displayStopNames = {};
+    monitor.stopNames = {};
+    monitor.shadowStopName = undefined; //= currentStop.currentStopCode;
     monitor.errorText = "";
     monitor.timeMax = 20;
     monitor.submitRequest = submitArrivalRequest;
 
     stopNames.stopNamePromise
     .then(function(stopNames) {
-      function getDisplayName(name, code) {
-        return name + " (" + code + ")";
+      monitor.stopNames = stopNames;
+      if (currentStop.currentStopCode !== undefined) {
+        var name = stopNames[currentStop.currentStopCode];
+        var code = currentStop.currentStopCode;
+        monitor.shadowStopName = getDisplayName(name, code);
       }
 
       for (var stop in stopNames) {
         var displayName = getDisplayName(stopNames[stop], stop);
-        monitor.stops[displayName] = stop;
+        monitor.displayStopNames[displayName] = stop;
       }
+
       getArrivalTimes();
+
+      function getDisplayName(name, code) {
+        return name + " (" + code + ")";
+      }
     });
 
     function submitArrivalRequest() {
-      stopNames.currentStop = monitor.shadowStopName;
-      getArrivalTimes();
+      if (monitor.shadowStopName !== undefined) {
+        currentStop.currentStopCode = monitor.displayStopNames[monitor.shadowStopName];
+        getArrivalTimes();
+      }
     }
 
     function getArrivalTimes() {
-      if (monitor.stops[stopNames.currentStop] === undefined) {
+      if (currentStop.currentStopCode === undefined) {
         return;
       }
-      var stopCode = monitor.stops[stopNames.currentStop];
+      var stopCode = currentStop.currentStopCode;
 
       arrivalTimes.getArrivalTimes(stopCode)
       .then(function(arrivals) {

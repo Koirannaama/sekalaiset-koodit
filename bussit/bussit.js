@@ -14,7 +14,7 @@ app.config(function($routeProvider) {
 });
 
 app.service("stopNames", function($http) {
-  this.currentStop = "Sammonkatu 47 (4517)";
+  //this.currentStop = "Sammonkatu 47 (4517)";
   this.stopNamePromise = getStopNames();
 
   function getStopNames() {

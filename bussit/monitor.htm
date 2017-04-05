@@ -18,7 +18,9 @@
         <th>Aika saapumiseen</th>
       </tr>
       <tr ng-repeat="arrival in controller.arrivalTimes">
-        <td class="table-item-left">{{ arrival.line }}</td>
+        <td class="table-item-left">
+          <span class="line-span">{{ arrival.line }}</span>
+        </td>
         <td class="table-item-right">
           <span class="time-span">{{ arrival.time }}</span>
           <progress class="arrival-progress"

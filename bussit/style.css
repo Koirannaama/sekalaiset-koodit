@@ -101,6 +101,11 @@ th, td {
   border-left-color: rgb(18, 89, 0);
   border-left-style: solid;
   border-left-width: 2px;
+  text-align: left;
+}
+
+.table-item-left {
+  text-align: right;
 }
 
 th {
@@ -183,5 +188,12 @@ progress::-moz-progress-bar {
 }
 
 .time-span {
-  position: absolute;
+  display: inline-block;
+  width: 25px;
+  padding-left: 10px;
+}
+
+.line-span {
+  width: 25px;
+  padding-right: 10px;
 }
