@@ -1,6 +1,7 @@
 port module Main exposing (..)
 
 import Html exposing (Html, program, div, input, text, ul, li)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onInput)
 import Platform.Cmd exposing (Cmd, none)
 import Platform.Sub exposing (Sub, none)
@@ -61,17 +62,27 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div []
-    [ (input [ onInput PlaceInput] [])
-    , (suggestionDisplay model.suggestions)
-    , (photoElement model.photoUrl)
+    [ searchElement model.suggestions
+    , photoElement model.photoUrl
     ]
+
+searchElement : List Suggestion -> Html Msg
+searchElement suggestions =
+  let
+    inputBox = input [ class "input-box place-input-element", onInput PlaceInput] []
+    children =
+      case suggestions of
+        [] -> [inputBox]
+        ss -> [inputBox, (suggestionDisplay ss)]
+  in
+    div [ class "col-md-2 col-md-offset-5" ] children
 
 suggestionDisplay : List Suggestion -> Html Msg
 suggestionDisplay suggs =
   let
     listItems = List.map (\s -> li [] [ text s.description ]) suggs
   in
-    ul [] listItems
+    ul [ class "suggestions place-input-element" ] listItems
 
 photoElement : String -> Html Msg
 photoElement url =

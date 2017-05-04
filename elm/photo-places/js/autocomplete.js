@@ -1,7 +1,12 @@
 function getSuggestions(input, suggestionPort) {
-  var service = new google.maps.places.AutocompleteService();
-  service.getPlacePredictions({ "input": input },
-                              processSuggestions);
+  if ( input !== "") {
+    var service = new google.maps.places.AutocompleteService();
+    service.getPlacePredictions({ "input": input },
+                                processSuggestions);
+  }
+  else {
+    suggestionPort.send([]);
+  }
 
   function processSuggestions(suggestionData, status) {
     if (status === google.maps.places.PlacesServiceStatus.OK) {
