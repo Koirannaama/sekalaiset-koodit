@@ -1,13 +1,11 @@
 port module Main exposing (..)
 
-import Html exposing (Html, program, div, input, text, ul, li)
+import Html exposing (Html, program, div, input, text, ul, li, button)
 import Html.Attributes exposing (class)
-import Html.Events exposing (onInput)
+import Html.Events exposing (onInput, onClick)
 import Platform.Cmd exposing (Cmd, none)
 import Platform.Sub exposing (Sub, none)
 import Http exposing (header, send, jsonBody, Error, Expect, Body, request, emptyBody, expectJson)
-import Json.Decode as Decode exposing (keyValuePairs, int, field, map)
-import Time exposing (millisecond, Time)
 import Debug exposing (log)
 import Element exposing (toHtml, image)
 
@@ -34,11 +32,13 @@ type alias Model = { input: String
 type alias Suggestion = { id: String
                         , description: String }
 
+type Direction = Left | Right
+
 type Msg =
   PlaceInput String
   | PlaceSuggestions (List Suggestion)
   | PhotoUrl String
-
+  | SwitchPhoto Direction
 
 init : (Model, Cmd Msg)
 init = ({ input = "", suggestions = [], photoUrl = "" }, Cmd.none)
@@ -58,24 +58,40 @@ update msg model =
       ({ model | suggestions = suggs }, Cmd.none)
     PhotoUrl url ->
       ({ model | photoUrl = url }, Cmd.none)
+    SwitchPhoto dir ->
+      (model, Cmd.none)
 
 view : Model -> Html Msg
 view model =
-  div []
-    [ searchElement model.suggestions
+  div [ class "top-container" ]
+    [ topBar model.suggestions
     , photoElement model.photoUrl
     ]
+
+topBar : List Suggestion -> Html Msg
+topBar suggestions =
+  let
+    controls =
+      div [ class "top-bar-controls col-md-4 col-md-offset-4" ]
+        [ searchElement suggestions
+        , button [ class "button col-md-2 col-xs-2", onClick (SwitchPhoto Left) ] [ text "L" ]
+        , button [ class "button col-md-2 col-xs-2", onClick (SwitchPhoto Right) ] [ text "R"]
+        ]
+  in
+    div [ class "top-bar row col-md-12" ] [ controls ]
 
 searchElement : List Suggestion -> Html Msg
 searchElement suggestions =
   let
-    inputBox = input [ class "input-box place-input-element", onInput PlaceInput] []
+    inputBox =
+      input [ class "input-box place-input-element"
+            , onInput PlaceInput] []
     children =
       case suggestions of
         [] -> [inputBox]
         ss -> [inputBox, (suggestionDisplay ss)]
   in
-    div [ class "col-md-2 col-md-offset-5" ] children
+    div [ class "search-element col-md-8 col-xs-8" ] children
 
 suggestionDisplay : List Suggestion -> Html Msg
 suggestionDisplay suggs =
