@@ -1,48 +1,32 @@
 port module Main exposing (..)
 
-import Html exposing (Html, program, div, input, text, ul, li, button)
+import Html exposing (Html, program, div, input, text, ul, li, button, span)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onInput, onClick)
 import Platform.Cmd exposing (Cmd, none)
 import Platform.Sub exposing (Sub, none)
-import Http exposing (header, send, jsonBody, Error, Expect, Body, request, emptyBody, expectJson)
-import Debug exposing (log)
 import Element exposing (toHtml, image)
+import Model exposing (Model, Suggestion, RawSuggestion, getSuggestionDescription, getSuggestions
+                      , initModel, setInput, setSuggestions, setPhotoUrls, getPhotoUrl)
 
-port photoUrl : (String -> msg) -> Sub msg
+port photoUrls : (List String -> msg) -> Sub msg
 
 port placeInput : String -> Cmd msg
 
-port placeSuggestions : (List Suggestion -> msg) -> Sub msg
-
-apiKey : String
-apiKey = "AIzaSyCKorHiV5ltM3pHvcyPCFrEfh05tTag98Y"
-
-placesAutoCompleteURL : String -> String
-placesAutoCompleteURL input =
-  "https://maps.googleapis.com/maps/api/place/autocomplete/json?input="
-  ++ input
-  ++ "&key="
-  ++ apiKey
-
-type alias Model = { input: String
-                   , suggestions: (List Suggestion)
-                   , photoUrl: String }
-
-type alias Suggestion = { id: String
-                        , description: String }
+port placeSuggestions : (List RawSuggestion -> msg) -> Sub msg
 
 type Direction = Left | Right
 
 type Msg =
   PlaceInput String
-  | PlaceSuggestions (List Suggestion)
-  | PhotoUrl String
+  | PlaceSuggestions (List RawSuggestion)
+  | PhotoUrls (List String)
   | SwitchPhoto Direction
 
 init : (Model, Cmd Msg)
-init = ({ input = "", suggestions = [], photoUrl = "" }, Cmd.none)
+init = (Model.initModel, Cmd.none)
 
+main : Program Never Model Msg
 main =
   Html.program { init = init,
                  update = update,
@@ -53,20 +37,23 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     PlaceInput input ->
-      ({ model | input = input }, (placeInput input))
+      ((Model.setInput input model), (placeInput input))
     PlaceSuggestions suggs ->
-      ({ model | suggestions = suggs }, Cmd.none)
-    PhotoUrl url ->
-      ({ model | photoUrl = url }, Cmd.none)
+      ((Model.setSuggestions suggs model), Cmd.none)
+    PhotoUrls urls ->
+      ((Model.setPhotoUrls urls model), Cmd.none)
     SwitchPhoto dir ->
       (model, Cmd.none)
 
 view : Model -> Html Msg
 view model =
-  div [ class "top-container" ]
-    [ topBar model.suggestions
-    , photoElement model.photoUrl
-    ]
+  let
+    content = photoElement (Model.getPhotoUrl model)
+  in 
+    div [ class "top-container" ]
+      [ topBar (Model.getSuggestions model)
+      , content
+      ]
 
 topBar : List Suggestion -> Html Msg
 topBar suggestions =
@@ -74,11 +61,22 @@ topBar suggestions =
     controls =
       div [ class "top-bar-controls col-md-4 col-md-offset-4" ]
         [ searchElement suggestions
-        , button [ class "button col-md-2 col-xs-2", onClick (SwitchPhoto Left) ] [ text "L" ]
-        , button [ class "button col-md-2 col-xs-2", onClick (SwitchPhoto Right) ] [ text "R"]
+        , switchPhotoButton Left
+        , switchPhotoButton Right
         ]
   in
     div [ class "top-bar row col-md-12" ] [ controls ]
+
+switchPhotoButton : Direction -> Html Msg
+switchPhotoButton dir =
+  let
+    iconClass =
+      case dir of
+        Left -> "glyphicon glyphicon-arrow-left"
+        Right -> "glyphicon glyphicon-arrow-right"
+    icon = span [ class iconClass ] []
+  in
+    button [ class "button col-md-2 col-xs-2", onClick (SwitchPhoto dir) ] [ icon ]
 
 searchElement : List Suggestion -> Html Msg
 searchElement suggestions =
@@ -96,7 +94,7 @@ searchElement suggestions =
 suggestionDisplay : List Suggestion -> Html Msg
 suggestionDisplay suggs =
   let
-    listItems = List.map (\s -> li [] [ text s.description ]) suggs
+    listItems = List.map (\s -> li [] [ text (Model.getSuggestionDescription s) ]) suggs
   in
     ul [ class "suggestions place-input-element" ] listItems
 
@@ -107,4 +105,4 @@ photoElement url =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.batch [ photoUrl PhotoUrl,  placeSuggestions PlaceSuggestions]
+  Sub.batch [ photoUrls PhotoUrls,  placeSuggestions PlaceSuggestions]

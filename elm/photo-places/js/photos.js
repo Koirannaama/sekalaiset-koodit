@@ -9,9 +9,11 @@ function getPhotoUrls(placeID, urlPort) {
   function callback(place, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
       var photos = place.photos;
-      // change height to 100%
-      var photoUrl = photos[0].getUrl({'maxWidth': 2000, 'maxHeight': 2000});
-      urlPort.send(photoUrl);
+      // width, height don't matter, set elsewhere
+      var urls = photos.map(function(photo) {
+        return photo.getUrl({'maxWidth': 2000, 'maxHeight': 2000});
+      });
+      urlPort.send(urls);
     }
   }
 }
