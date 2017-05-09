@@ -1,37 +1,33 @@
-module Model exposing (Model, Suggestion, RawSuggestion, getSuggestionDescription, getSuggestions
-                      , initModel, setInput, setSuggestions, setPhotoUrls, getPhotoUrl)
+module Model exposing (Model, getSuggestions, initModel, setInput, setSuggestions, setPhotoUrls
+                      , getPhotoUrl, setChosenSuggestion, getInput)
+
+import Suggestion exposing (Suggestion, RawSuggestion, getDescription, suggestion)
 
 type Model 
     = Model { input: String
             , suggestions: (List Suggestion)
-            , photoUrls: List String 
+            , photoUrls: List String
+            , chosenSuggestion: Maybe Suggestion
             }
-
-type Suggestion 
-    = Suggestion { id: String
-                 , description: String 
-                 } 
-
-type alias RawSuggestion = { id: String
-                           , description: String }
-
-getSuggestionDescription : Suggestion -> String
-getSuggestionDescription (Suggestion s) = s.description
 
 getSuggestions : Model -> List Suggestion
 getSuggestions (Model m) = m.suggestions
 
 initModel : Model 
-initModel = Model { input = "", suggestions = [], photoUrls = [] }
+initModel = Model { input = "", suggestions = [], photoUrls = [], chosenSuggestion = Nothing }
 
 setInput : String -> Model -> Model
 setInput input (Model m) = 
   Model { m | input = input }
 
+getInput : Model -> String
+getInput (Model m) =
+  m.input
+
 setSuggestions : List RawSuggestion -> Model -> Model
 setSuggestions rawSuggs (Model m) =
   let
-    suggestions = List.map Suggestion rawSuggs
+    suggestions = List.map Suggestion.suggestion rawSuggs
   in
     Model { m | suggestions = suggestions }
 
@@ -44,3 +40,14 @@ getPhotoUrl (Model m) =
   case List.head m.photoUrls of
     Just url -> url
     Nothing -> "" --TODO: doesn't make sense yet
+
+setChosenSuggestion : Suggestion -> Model -> Model
+setChosenSuggestion suggestion (Model m) =
+  let
+    chosenSugg = Just suggestion
+  in
+    Model { chosenSuggestion = chosenSugg
+          , input = Suggestion.getDescription suggestion
+          , photoUrls = []
+          , suggestions = []
+          }

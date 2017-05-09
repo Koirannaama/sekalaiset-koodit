@@ -1,19 +1,21 @@
 port module Main exposing (..)
 
 import Html exposing (Html, program, div, input, text, ul, li, button, span)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, value)
 import Html.Events exposing (onInput, onClick)
 import Platform.Cmd exposing (Cmd, none)
 import Platform.Sub exposing (Sub, none)
 import Element exposing (toHtml, image)
-import Model exposing (Model, Suggestion, RawSuggestion, getSuggestionDescription, getSuggestions
-                      , initModel, setInput, setSuggestions, setPhotoUrls, getPhotoUrl)
+import Model exposing (Model, initModel, setInput, setSuggestions, setPhotoUrls, getPhotoUrl, setChosenSuggestion, getInput)
+import Suggestion exposing (Suggestion, RawSuggestion, getDescription, photoCommand)
 
 port photoUrls : (List String -> msg) -> Sub msg
 
 port placeInput : String -> Cmd msg
 
 port placeSuggestions : (List RawSuggestion -> msg) -> Sub msg
+
+port getPhotos : String -> Cmd msg
 
 type Direction = Left | Right
 
@@ -22,6 +24,7 @@ type Msg =
   | PlaceSuggestions (List RawSuggestion)
   | PhotoUrls (List String)
   | SwitchPhoto Direction
+  | SelectSuggestion Suggestion
 
 init : (Model, Cmd Msg)
 init = (Model.initModel, Cmd.none)
@@ -44,23 +47,28 @@ update msg model =
       ((Model.setPhotoUrls urls model), Cmd.none)
     SwitchPhoto dir ->
       (model, Cmd.none)
+    SelectSuggestion sugg ->
+      ((Model.setChosenSuggestion sugg model), (Suggestion.photoCommand getPhotos sugg))
+
 
 view : Model -> Html Msg
 view model =
   let
     content = photoElement (Model.getPhotoUrl model)
+    suggestions = Model.getSuggestions model
+    userInput = Model.getInput model
   in 
     div [ class "top-container" ]
-      [ topBar (Model.getSuggestions model)
+      [ topBar suggestions userInput
       , content
       ]
 
-topBar : List Suggestion -> Html Msg
-topBar suggestions =
+topBar : List Suggestion -> String -> Html Msg
+topBar suggestions userInput =
   let
     controls =
       div [ class "top-bar-controls col-md-4 col-md-offset-4" ]
-        [ searchElement suggestions
+        [ searchElement suggestions userInput
         , switchPhotoButton Left
         , switchPhotoButton Right
         ]
@@ -78,12 +86,13 @@ switchPhotoButton dir =
   in
     button [ class "button col-md-2 col-xs-2", onClick (SwitchPhoto dir) ] [ icon ]
 
-searchElement : List Suggestion -> Html Msg
-searchElement suggestions =
+searchElement : List Suggestion -> String -> Html Msg
+searchElement suggestions userInput =
   let
     inputBox =
       input [ class "input-box place-input-element"
-            , onInput PlaceInput] []
+            , onInput PlaceInput
+            , value userInput ] []
     children =
       case suggestions of
         [] -> [inputBox]
@@ -94,7 +103,10 @@ searchElement suggestions =
 suggestionDisplay : List Suggestion -> Html Msg
 suggestionDisplay suggs =
   let
-    listItems = List.map (\s -> li [] [ text (Model.getSuggestionDescription s) ]) suggs
+    listItem suggestion =
+      li [ onClick (SelectSuggestion suggestion) ] 
+         [ text (Suggestion.getDescription suggestion) ]
+    listItems = List.map listItem suggs
   in
     ul [ class "suggestions place-input-element" ] listItems
 

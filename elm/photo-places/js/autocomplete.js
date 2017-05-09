@@ -13,7 +13,6 @@ function getSuggestions(input, suggestionPort) {
       var suggestions = suggestionData.map(function getDescriptionAndID(sugg) {
         return { description: sugg.description, id: sugg.place_id };
       });
-      console.log(suggestions);
       suggestionPort.send(suggestions);
     }
   }
