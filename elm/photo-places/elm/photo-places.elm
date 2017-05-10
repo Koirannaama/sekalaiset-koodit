@@ -1,12 +1,12 @@
 port module Main exposing (..)
 
 import Html exposing (Html, program, div, input, text, ul, li, button, span)
-import Html.Attributes exposing (class, value)
+import Html.Attributes exposing (class, value, placeholder)
 import Html.Events exposing (onInput, onClick)
 import Platform.Cmd exposing (Cmd, none)
 import Platform.Sub exposing (Sub, none)
 import Element exposing (toHtml, image)
-import Model exposing (Model, initModel, setInput, setSuggestions, setPhotoUrls, getPhotoUrl, setChosenSuggestion, getInput)
+import Model exposing (Model, initModel, setInput, setSuggestions, setPhotoUrls, getPhotoUrl, setChosenSuggestion, getInput, nextPhotoUrl, prevPhotoUrl)
 import Suggestion exposing (Suggestion, RawSuggestion, getDescription, photoCommand)
 
 port photoUrls : (List String -> msg) -> Sub msg
@@ -46,7 +46,11 @@ update msg model =
     PhotoUrls urls ->
       ((Model.setPhotoUrls urls model), Cmd.none)
     SwitchPhoto dir ->
-      (model, Cmd.none)
+      case dir of
+        Right ->
+          (Model.nextPhotoUrl model, Cmd.none)
+        Left ->
+          (Model.prevPhotoUrl model, Cmd.none)
     SelectSuggestion sugg ->
       ((Model.setChosenSuggestion sugg model), (Suggestion.photoCommand getPhotos sugg))
 
@@ -69,11 +73,18 @@ topBar suggestions userInput =
     controls =
       div [ class "top-bar-controls col-md-4 col-md-offset-4" ]
         [ searchElement suggestions userInput
+        , searchButton --TODO: doesn't do anything yet
         , switchPhotoButton Left
         , switchPhotoButton Right
         ]
   in
     div [ class "top-bar row col-md-12" ] [ controls ]
+
+searchButton : Html Msg
+searchButton =
+  button 
+    [ class "button search-button col-md-1 col-xs-1"] 
+    [ span [ class "glyphicon glyphicon-search" ] [] ]
 
 switchPhotoButton : Direction -> Html Msg
 switchPhotoButton dir =
@@ -92,13 +103,14 @@ searchElement suggestions userInput =
     inputBox =
       input [ class "input-box place-input-element"
             , onInput PlaceInput
-            , value userInput ] []
+            , value userInput
+            , placeholder "Search for location" ] []
     children =
       case suggestions of
         [] -> [inputBox]
         ss -> [inputBox, (suggestionDisplay ss)]
   in
-    div [ class "search-element col-md-8 col-xs-8" ] children
+    div [ class "search-element col-md-7 col-xs-7" ] children
 
 suggestionDisplay : List Suggestion -> Html Msg
 suggestionDisplay suggs =

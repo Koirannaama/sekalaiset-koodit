@@ -1,7 +1,8 @@
 module Model exposing (Model, getSuggestions, initModel, setInput, setSuggestions, setPhotoUrls
-                      , getPhotoUrl, setChosenSuggestion, getInput)
+                      , getPhotoUrl, setChosenSuggestion, getInput, nextPhotoUrl, prevPhotoUrl)
 
 import Suggestion exposing (Suggestion, RawSuggestion, getDescription, suggestion)
+import Debug exposing (log)
 
 type Model 
     = Model { input: String
@@ -51,3 +52,31 @@ setChosenSuggestion suggestion (Model m) =
           , photoUrls = []
           , suggestions = []
           }
+
+firstToLast : List a -> List a
+firstToLast list =
+  case list of
+    [] -> []
+    [x] -> [x]
+    x::xs -> List.append xs [x]
+
+lastToFirst : List a -> List a
+lastToFirst list =
+  case List.reverse list of
+    [] -> []
+    [x] -> [x]
+    x::xs -> x :: (List.reverse xs)
+
+nextPhotoUrl : Model -> Model
+nextPhotoUrl (Model m) =
+  let
+    urls = firstToLast m.photoUrls --|> List.map (Debug.log "") --TODO: might want to handle empty list differently
+  in
+    Model { m | photoUrls = urls }
+
+prevPhotoUrl : Model -> Model
+prevPhotoUrl (Model m) =
+  let
+    urls = lastToFirst m.photoUrls
+  in
+    Model { m | photoUrls = urls }
