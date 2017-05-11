@@ -2,7 +2,6 @@ module Model exposing (Model, getSuggestions, initModel, setInput, setSuggestion
                       , getPhotoUrl, setChosenSuggestion, getInput, nextPhotoUrl, prevPhotoUrl)
 
 import Suggestion exposing (Suggestion, RawSuggestion, getDescription, suggestion)
-import Debug exposing (log)
 
 type Model 
     = Model { input: String
@@ -68,15 +67,9 @@ lastToFirst list =
     x::xs -> x :: (List.reverse xs)
 
 nextPhotoUrl : Model -> Model
-nextPhotoUrl (Model m) =
-  let
-    urls = firstToLast m.photoUrls --|> List.map (Debug.log "") --TODO: might want to handle empty list differently
-  in
-    Model { m | photoUrls = urls }
+nextPhotoUrl ((Model m) as model) =
+  firstToLast m.photoUrls |> (flip setPhotoUrls) model
 
 prevPhotoUrl : Model -> Model
-prevPhotoUrl (Model m) =
-  let
-    urls = lastToFirst m.photoUrls
-  in
-    Model { m | photoUrls = urls }
+prevPhotoUrl ((Model m) as model) =
+  lastToFirst m.photoUrls |> (flip setPhotoUrls) model    
