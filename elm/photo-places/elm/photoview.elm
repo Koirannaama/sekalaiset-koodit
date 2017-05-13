@@ -24,12 +24,17 @@ view model =
 topBar : List Suggestion -> String -> Html Msg
 topBar suggestions userInput =
   let
-    controls =
-      div [ class "top-bar-controls col-md-4 col-md-offset-4" ]
-        [ searchElement suggestions userInput
-        , searchButton --TODO: doesn't do anything yet
+    photoButtons =
+      div [ class "col-md-3 col-xs-4 button-container" ] 
+        [ searchButton --TODO: doesn't do anything yet
         , switchPhotoButton Left
         , switchPhotoButton Right
+        ]
+    controls =
+      div [ class "top-bar-controls col-md-8 col-md-offset-4 col-xs-12" ]
+        [ searchElement suggestions userInput
+        , photoButtons
+        , navButtons
         ]
   in
     div [ class "top-bar row col-md-12" ] [ controls ]
@@ -37,7 +42,7 @@ topBar suggestions userInput =
 searchButton : Html Msg
 searchButton =
   button 
-    [ class "button search-button col-md-1 col-xs-1"] 
+    [ class "button search-button col-md-2 col-xs-2"] 
     [ span [ class "glyphicon glyphicon-search" ] [] ]
 
 switchPhotoButton : Direction -> Html Msg
@@ -49,7 +54,7 @@ switchPhotoButton dir =
         Right -> "glyphicon glyphicon-arrow-right"
     icon = span [ class iconClass ] []
   in
-    button [ class "button col-md-2 col-xs-2", onClick (SwitchPhoto dir) ] [ icon ]
+    button [ class "button col-md-5 col-xs-5", onClick (SwitchPhoto dir) ] [ icon ]
 
 searchElement : List Suggestion -> String -> Html Msg
 searchElement suggestions userInput =
@@ -64,7 +69,7 @@ searchElement suggestions userInput =
         [] -> [inputBox]
         ss -> [inputBox, (suggestionDisplay ss)]
   in
-    div [ class "search-element col-md-7 col-xs-7" ] children
+    div [ class "search-element col-md-4 col-xs-4" ] children
 
 suggestionDisplay : List Suggestion -> Html Msg
 suggestionDisplay suggs =
@@ -80,3 +85,10 @@ photoElement : String -> Html Msg
 photoElement url =
   Element.image 1000 1000 url
   |> Element.toHtml
+
+navButtons : Html Msg
+navButtons =
+  div [ class "col-md-5 col-xs-4 text-right button-container" ] 
+    [ button [ class "button" ] [ text "Search" ]
+    , button [ class "button" ] [ text "Gallery" ]
+    ]

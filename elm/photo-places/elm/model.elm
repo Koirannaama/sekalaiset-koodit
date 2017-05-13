@@ -1,5 +1,5 @@
-module Model exposing (Model, getSuggestions, initModel, setInput, setSuggestions, setPhotoUrls
-                      , getPhotoUrl, setChosenSuggestion, getInput, nextPhotoUrl, prevPhotoUrl)
+module Model exposing (Model, Route(..), getSuggestions, initModel, setInput, setSuggestions, setPhotoUrls
+                      , getPhotoUrl, setChosenSuggestion, getInput, nextPhotoUrl, prevPhotoUrl, setRoute, getRoute)
 
 import Suggestion exposing (Suggestion, RawSuggestion, getDescription, suggestion)
 
@@ -8,13 +8,30 @@ type Model
             , suggestions: (List Suggestion)
             , photoUrls: List String
             , chosenSuggestion: Maybe Suggestion
+            , route: Route
             }
+
+type Route =
+  PhotoRoute
+  | GalleryRoute
+  | NotFoundRoute
 
 getSuggestions : Model -> List Suggestion
 getSuggestions (Model m) = m.suggestions
 
-initModel : Model 
-initModel = Model { input = "", suggestions = [], photoUrls = [], chosenSuggestion = Nothing }
+initModel : Route -> Model 
+initModel route = 
+  Model { input = ""
+        , suggestions = []
+        , photoUrls = []
+        , chosenSuggestion = Nothing
+        , route = route }
+
+setRoute : Route -> Model -> Model
+setRoute newRoute (Model m) = Model { m | route = newRoute }
+
+getRoute : Model -> Route
+getRoute (Model m) = m.route
 
 setInput : String -> Model -> Model
 setInput input (Model m) = 
@@ -50,6 +67,7 @@ setChosenSuggestion suggestion (Model m) =
           , input = Suggestion.getDescription suggestion
           , photoUrls = []
           , suggestions = []
+          , route = m.route
           }
 
 firstToLast : List a -> List a

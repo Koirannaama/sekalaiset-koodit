@@ -19,6 +19,10 @@ body {
   height: 100%;
 }
 
+.button-container {
+  height: 100%;
+}
+
 .button {
   height: 100%;
   background-color: rgb(66, 194, 244);
