@@ -1,4 +1,4 @@
-module Model exposing (Model, Route(..), getSuggestions, initModel, setInput, setSuggestions, setPhotoUrls
+module Model exposing (Model, Route(..), getSuggestions, initModel, setInput, setSuggestions, flushSuggestions, setPhotoUrls
                       , getPhotoUrl, setChosenSuggestion, getInput, nextPhotoUrl, prevPhotoUrl, setRoute, getRoute)
 
 import Suggestion exposing (Suggestion, RawSuggestion, getDescription, suggestion)
@@ -47,6 +47,9 @@ setSuggestions rawSuggs (Model m) =
     suggestions = List.map Suggestion.suggestion rawSuggs
   in
     Model { m | suggestions = suggestions }
+
+flushSuggestions : Model -> Model
+flushSuggestions (Model m) = Model {m | suggestions = [] }
 
 setPhotoUrls : List String -> Model -> Model
 setPhotoUrls urls (Model m) =

@@ -26,7 +26,7 @@ topBar suggestions userInput =
   let
     photoButtons =
       div [ class "col-md-3 col-xs-4 button-container" ] 
-        [ searchButton --TODO: doesn't do anything yet
+        [ searchButton userInput--TODO: doesn't do anything yet
         , switchPhotoButton Left
         , switchPhotoButton Right
         ]
@@ -39,10 +39,10 @@ topBar suggestions userInput =
   in
     div [ class "top-bar row col-md-12" ] [ controls ]
 
-searchButton : Html Msg
-searchButton =
+searchButton : String -> Html Msg
+searchButton input =
   button 
-    [ class "button search-button col-md-2 col-xs-2"] 
+    [ class "button search-button col-md-2 col-xs-2", onClick (FreeTextSearch input)] 
     [ span [ class "glyphicon glyphicon-search" ] [] ]
 
 switchPhotoButton : Direction -> Html Msg
