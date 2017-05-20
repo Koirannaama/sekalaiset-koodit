@@ -64,6 +64,7 @@ update msg model =
     KeyPressed code ->
       case code of
         13 -> ((Model.flushSuggestions model), getPhotosByFreeText (Model.getInput model))
+        27 -> ((Model.flushSuggestions model), Cmd.none)
         37 -> (Model.prevPhotoUrl model, Cmd.none)
         39 -> (Model.nextPhotoUrl model, Cmd.none)
         _ -> (model, Cmd.none)

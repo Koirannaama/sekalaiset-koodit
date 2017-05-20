@@ -25,19 +25,19 @@ topBar : List Suggestion -> String -> Html Msg
 topBar suggestions userInput =
   let
     photoButtons =
-      div [ class "col-md-3 col-xs-4 button-container" ] 
-        [ searchButton userInput--TODO: doesn't do anything yet
+      div [ class "col-md-3 col-xs-4 photo-button-container" ] 
+        [ searchButton userInput
         , switchPhotoButton Left
         , switchPhotoButton Right
         ]
     controls =
-      div [ class "top-bar-controls col-md-8 col-md-offset-4 col-xs-12" ]
+      div [ class "top-bar-controls no-side-pad col-md-8 col-md-offset-4 col-xs-12" ]
         [ searchElement suggestions userInput
         , photoButtons
         , navButtons
         ]
   in
-    div [ class "top-bar row col-md-12" ] [ controls ]
+    div [ class "top-bar no-side-pad row col-md-12" ] [ controls ]
 
 searchButton : String -> Html Msg
 searchButton input =
@@ -88,7 +88,7 @@ photoElement url =
 
 navButtons : Html Msg
 navButtons =
-  div [ class "col-md-5 col-xs-4 text-right button-container" ] 
+  div [ class "col-md-5 col-xs-4 text-right nav-button-container" ] 
     [ button [ class "button" ] [ text "Search" ]
     , button [ class "button" ] [ text "Gallery" ]
     ]
