@@ -1,10 +1,10 @@
 module PhotoView exposing (view)
 
 import Html exposing (Html, div, input, text, ul, li, button, span)
-import Html.Attributes exposing (class, value, placeholder)
+import Html.Attributes exposing (class, value, placeholder, classList)
 import Html.Events exposing (onInput, onClick)
 import Element exposing (toHtml, image)
-import Model exposing (Model, getPhotoUrl, getSuggestions, getInput)
+import Model exposing (Model, getPhotoUrl, getSuggestions, getInput, isLoading)
 import Suggestion exposing (Suggestion, getDescription)
 import Msg exposing (Msg(..))
 import Direction exposing (Direction(..))
@@ -15,24 +15,26 @@ view model =
     content = photoElement (Model.getPhotoUrl model)
     suggestions = Model.getSuggestions model
     userInput = Model.getInput model
+    isLoading = Model.isLoading model
   in 
     div [ class "top-container" ]
-      [ topBar suggestions userInput
+      [ topBar suggestions userInput isLoading
       , content
       ]
 
-topBar : List Suggestion -> String -> Html Msg
-topBar suggestions userInput =
+topBar : List Suggestion -> String -> Bool -> Html Msg
+topBar suggestions userInput isLoading =
   let
     photoButtons =
-      div [ class "col-md-3 col-xs-4 photo-button-container" ] 
+      div [ class "col-md-2 col-xs-3 photo-button-container" ] 
         [ searchButton userInput
         , switchPhotoButton Left
         , switchPhotoButton Right
         ]
     controls =
-      div [ class "top-bar-controls no-side-pad col-md-8 col-md-offset-4 col-xs-12" ]
-        [ searchElement suggestions userInput
+      div [ class "col-md-12 col-xs-12 row top-bar-controls no-side-pad" ]
+        [ activityIndicator isLoading
+        , searchElement suggestions userInput
         , photoButtons
         , navButtons
         ]
@@ -69,7 +71,7 @@ searchElement suggestions userInput =
         [] -> [inputBox]
         ss -> [inputBox, (suggestionDisplay ss)]
   in
-    div [ class "search-element col-md-4 col-xs-4" ] children
+    div [ class "col-md-3 col-xs-4 search-element" ] children
 
 suggestionDisplay : List Suggestion -> Html Msg
 suggestionDisplay suggs =
@@ -88,7 +90,16 @@ photoElement url =
 
 navButtons : Html Msg
 navButtons =
-  div [ class "col-md-5 col-xs-4 text-right nav-button-container" ] 
+  div [ class "col-md-3 col-xs-4 text-right nav-button-container" ] 
     [ button [ class "button" ] [ text "Search" ]
     , button [ class "button" ] [ text "Gallery" ]
     ]
+
+activityIndicator : Bool -> Html Msg
+activityIndicator isVisible =
+  let
+    activityIndicatorClasses = 
+      classList [("hidden", not isVisible), ("float-right activity-indicator", True)]
+  in
+    div [ class "col-md-4 col-xs-1 activity-indicator-container full-height" ] 
+    [ div [ activityIndicatorClasses ] [  ] ]

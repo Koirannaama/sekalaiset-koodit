@@ -1,5 +1,5 @@
 module Model exposing (Model, Route(..), getSuggestions, initModel, setInput, setSuggestions, flushSuggestions, setPhotoUrls
-                      , getPhotoUrl, setChosenSuggestion, getInput, nextPhotoUrl, prevPhotoUrl, setRoute, getRoute)
+                      , getPhotoUrl, setChosenSuggestion, getInput, nextPhotoUrl, prevPhotoUrl, setRoute, getRoute, isLoading)
 
 import Suggestion exposing (Suggestion, RawSuggestion, getDescription, suggestion)
 
@@ -9,6 +9,7 @@ type Model
             , photoUrls: List String
             , chosenSuggestion: Maybe Suggestion
             , route: Route
+            , isLoading: Bool
             }
 
 type Route =
@@ -25,7 +26,9 @@ initModel route =
         , suggestions = []
         , photoUrls = []
         , chosenSuggestion = Nothing
-        , route = route }
+        , route = route
+        , isLoading = False
+        }
 
 setRoute : Route -> Model -> Model
 setRoute newRoute (Model m) = Model { m | route = newRoute }
@@ -53,7 +56,7 @@ flushSuggestions (Model m) = Model {m | suggestions = [] }
 
 setPhotoUrls : List String -> Model -> Model
 setPhotoUrls urls (Model m) =
-  Model { m | photoUrls = urls }
+  Model { m | photoUrls = urls, isLoading = False }
 
 getPhotoUrl : Model -> String
 getPhotoUrl (Model m) =
@@ -71,6 +74,7 @@ setChosenSuggestion suggestion (Model m) =
           , photoUrls = []
           , suggestions = []
           , route = m.route
+          , isLoading = True
           }
 
 firstToLast : List a -> List a
@@ -94,3 +98,6 @@ nextPhotoUrl ((Model m) as model) =
 prevPhotoUrl : Model -> Model
 prevPhotoUrl ((Model m) as model) =
   lastToFirst m.photoUrls |> (flip setPhotoUrls) model    
+
+isLoading : Model -> Bool
+isLoading (Model m) = m.isLoading
