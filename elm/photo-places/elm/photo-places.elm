@@ -4,7 +4,8 @@ import Platform.Cmd exposing (Cmd, none)
 import Platform.Sub exposing (Sub, none)
 import Navigation exposing (Location)
 import Keyboard exposing (KeyCode, presses)
-import Model exposing (Model, initModel, setInput, getInput, setSuggestions, flushSuggestions, setPhotoUrls, setChosenSuggestion, nextPhotoUrl, prevPhotoUrl, setRoute)
+import Model exposing (Model, initModel, setInput, getInput, setSuggestions, flushSuggestions
+                      , setPhotoUrls, setChosenSuggestion, nextPhotoUrl, prevPhotoUrl, setRoute, toggleSecondaryControls)
 import Suggestion exposing (Suggestion, RawSuggestion, photoCommand)
 import Msg exposing (Msg(..))
 import Direction exposing (Direction(..))
@@ -68,6 +69,8 @@ update msg model =
         37 -> (Model.prevPhotoUrl model, Cmd.none)
         39 -> (Model.nextPhotoUrl model, Cmd.none)
         _ -> (model, Cmd.none)
+    ToggleSecondaryPhotoControls ->
+      ((Model.toggleSecondaryControls model), Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

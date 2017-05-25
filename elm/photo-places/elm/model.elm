@@ -1,5 +1,5 @@
 module Model exposing (Model, Route(..), getSuggestions, initModel, setInput, setSuggestions, flushSuggestions, setPhotoUrls
-                      , getPhotoUrl, setChosenSuggestion, getInput, nextPhotoUrl, prevPhotoUrl, setRoute, getRoute, isLoading)
+                      , getPhotoUrl, setChosenSuggestion, getInput, nextPhotoUrl, prevPhotoUrl, setRoute, getRoute, isLoading, toggleSecondaryControls, showSecondaryControls)
 
 import Suggestion exposing (Suggestion, RawSuggestion, getDescription, suggestion)
 
@@ -10,6 +10,7 @@ type Model
             , chosenSuggestion: Maybe Suggestion
             , route: Route
             , isLoading: Bool
+            , showSecondaryControls: Bool
             }
 
 type Route =
@@ -28,6 +29,7 @@ initModel route =
         , chosenSuggestion = Nothing
         , route = route
         , isLoading = False
+        , showSecondaryControls = True
         }
 
 setRoute : Route -> Model -> Model
@@ -52,7 +54,7 @@ setSuggestions rawSuggs (Model m) =
     Model { m | suggestions = suggestions }
 
 flushSuggestions : Model -> Model
-flushSuggestions (Model m) = Model {m | suggestions = [] }
+flushSuggestions (Model m) = Model { m | suggestions = [] }
 
 setPhotoUrls : List String -> Model -> Model
 setPhotoUrls urls (Model m) =
@@ -75,6 +77,7 @@ setChosenSuggestion suggestion (Model m) =
           , suggestions = []
           , route = m.route
           , isLoading = True
+          , showSecondaryControls = m.showSecondaryControls
           }
 
 firstToLast : List a -> List a
@@ -101,3 +104,9 @@ prevPhotoUrl ((Model m) as model) =
 
 isLoading : Model -> Bool
 isLoading (Model m) = m.isLoading
+
+toggleSecondaryControls : Model -> Model
+toggleSecondaryControls (Model m) = Model { m | showSecondaryControls = not m.showSecondaryControls }
+
+showSecondaryControls : Model -> Bool
+showSecondaryControls (Model m) = m.showSecondaryControls

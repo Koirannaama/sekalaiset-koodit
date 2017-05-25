@@ -135,3 +135,32 @@ li:hover {
   background-color: rgb(225, 228, 234);
   cursor: pointer;
 }
+
+.secondary-photo-controls {
+  position: absolute;
+  width: 30%;
+  background-color: gray; /*TODO: Needs a more sensible color*/
+  top: 40px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.slide-hidden {
+  height: 0px;
+  -webkit-transition:height, 0.2s linear;
+  -moz-transition: height, 0.2s linear;
+  -ms-transition: height, 0.2s linear;
+  -o-transition: height, 0.2s linear;
+  transition: height, 0.2s linear;
+}
+
+.slide-open {
+  height: 40px;
+  -webkit-transition:height, 0.2s linear;
+  -moz-transition: height, 0.2s linear;
+  -ms-transition: height, 0.2s linear;
+  -o-transition: height, 0.2s linear;
+  transition: height, 0.2s linear;
+}

@@ -4,7 +4,7 @@ import Html exposing (Html, div, input, text, ul, li, button, span)
 import Html.Attributes exposing (class, value, placeholder, classList)
 import Html.Events exposing (onInput, onClick)
 import Element exposing (toHtml, image)
-import Model exposing (Model, getPhotoUrl, getSuggestions, getInput, isLoading)
+import Model exposing (Model, getPhotoUrl, getSuggestions, getInput, isLoading, showSecondaryControls)
 import Suggestion exposing (Suggestion, getDescription)
 import Msg exposing (Msg(..))
 import Direction exposing (Direction(..))
@@ -16,14 +16,15 @@ view model =
     suggestions = Model.getSuggestions model
     userInput = Model.getInput model
     isLoading = Model.isLoading model
+    showSecondaryControls = Model.showSecondaryControls model
   in 
     div [ class "top-container" ]
-      [ topBar suggestions userInput isLoading
+      [ topBar suggestions userInput isLoading showSecondaryControls
       , content
       ]
 
-topBar : List Suggestion -> String -> Bool -> Html Msg
-topBar suggestions userInput isLoading =
+topBar : List Suggestion -> String -> Bool -> Bool -> Html Msg
+topBar suggestions userInput isLoading secondaryControlsVisible =
   let
     photoButtons =
       div [ class "col-md-2 col-xs-3 photo-button-container" ] 
@@ -33,7 +34,8 @@ topBar suggestions userInput isLoading =
         ]
     controls =
       div [ class "col-md-12 col-xs-12 row top-bar-controls no-side-pad" ]
-        [ activityIndicator isLoading
+        [ secondaryPhotoControls secondaryControlsVisible
+        , activityIndicator isLoading
         , searchElement suggestions userInput
         , photoButtons
         , navButtons
@@ -101,5 +103,16 @@ activityIndicator isVisible =
     activityIndicatorClasses = 
       classList [("hidden", not isVisible), ("float-right activity-indicator", True)]
   in
-    div [ class "col-md-4 col-xs-1 activity-indicator-container full-height" ] 
-    [ div [ activityIndicatorClasses ] [  ] ]
+    div 
+      [ class "col-md-4 col-xs-1 activity-indicator-container full-height" ] 
+      [ div [ activityIndicatorClasses ] [] ]
+
+secondaryPhotoControls : Bool -> Html Msg
+secondaryPhotoControls isVisible = 
+  let
+    classes = classList [("secondary-photo-controls", True), ("slide-hidden", not isVisible), ("slide-open", isVisible)]
+  in  
+    div [ classes ] 
+      [ button [ onClick ToggleSecondaryPhotoControls ] [ text "Hide" ] 
+      , div [ classList [("hidden", not isVisible)]] [ text "dummy content" ]
+      ]

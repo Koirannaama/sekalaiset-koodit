@@ -15,3 +15,4 @@ type Msg =
   | FreeTextSearch String
   | ChangeView Location
   | KeyPressed KeyCode
+  | ToggleSecondaryPhotoControls
