@@ -11,6 +11,7 @@ type Model
             , route: Route
             , isLoading: Bool
             , showSecondaryControls: Bool
+            , currentPhotoNumber: Int
             }
 
 type Route =
@@ -30,6 +31,7 @@ initModel route =
         , route = route
         , isLoading = False
         , showSecondaryControls = True
+        , currentPhotoNumber = 0
         }
 
 setRoute : Route -> Model -> Model
@@ -78,6 +80,7 @@ setChosenSuggestion suggestion (Model m) =
           , route = m.route
           , isLoading = True
           , showSecondaryControls = m.showSecondaryControls
+          , currentPhotoNumber = m.currentPhotoNumber
           }
 
 firstToLast : List a -> List a
@@ -96,12 +99,20 @@ lastToFirst list =
 
 nextPhotoUrl : Model -> Model
 nextPhotoUrl ((Model m) as model) =
-  firstToLast m.photoUrls |> (flip setPhotoUrls) model
+  let
+    urls = firstToLast m.photoUrls
+    newNumber = m.currentPhotoNumber + 1
+  in
+    Model { m | photoUrls = urls, currentPhotoNumber = newNumber }
 
 prevPhotoUrl : Model -> Model
 prevPhotoUrl ((Model m) as model) =
-  lastToFirst m.photoUrls |> (flip setPhotoUrls) model    
-
+  let
+    urls = lastToFirst m.photoUrls
+    newNumber = m.currentPhotoNumber - 1
+  in
+    Model { m | photoUrls = urls, currentPhotoNumber = newNumber }
+    
 isLoading : Model -> Bool
 isLoading (Model m) = m.isLoading
 

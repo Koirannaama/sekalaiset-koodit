@@ -110,9 +110,20 @@ activityIndicator isVisible =
 secondaryPhotoControls : Bool -> Html Msg
 secondaryPhotoControls isVisible = 
   let
-    classes = classList [("secondary-photo-controls", True), ("slide-hidden", not isVisible), ("slide-open", isVisible)]
+    classes = classList [("row secondary-photo-controls", True), ("slide-hidden", not isVisible), ("slide-open", isVisible)]
   in  
     div [ classes ] 
-      [ button [ onClick ToggleSecondaryPhotoControls ] [ text "Hide" ] 
-      , div [ classList [("hidden", not isVisible)]] [ text "dummy content" ]
+      [ div [ class "col-md-12 toggle-button-container" ] [ toggleSecondaryControlsButton isVisible ]
+      , div 
+        [ classList [("col-md-12 sec-content", True), ("hidden", not isVisible)]] 
+        [ text "Image 1 / 13" ]
       ]
+
+toggleSecondaryControlsButton : Bool -> Html Msg
+toggleSecondaryControlsButton isIconUp =
+  let
+    iconClasses = classList [("glyphicon glyphicon-chevron-up", isIconUp), ("glyphicon glyphicon-chevron-down", not isIconUp)]
+  in
+    button 
+      [ onClick ToggleSecondaryPhotoControls, class "toggle-sec-controls col-md-2 col-md-offset-5" ] 
+      [ span [ iconClasses ] [] ]

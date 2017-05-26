@@ -139,12 +139,28 @@ li:hover {
 .secondary-photo-controls {
   position: absolute;
   width: 30%;
-  background-color: gray; /*TODO: Needs a more sensible color*/
+  background-color: rgb(56, 56, 56); /*TODO: Needs a more sensible color*/
   top: 40px;
   left: 0;
   right: 0;
   margin-left: auto;
   margin-right: auto;
+}
+
+.toggle-sec-controls {
+  background-color: rgb(56, 56, 56);
+  color: rgb(225, 228, 234);
+  border: 0 solid rgb(56, 56, 56);
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sec-content {
+  color: rgb(225, 228, 234);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
 }
 
 .slide-hidden {
