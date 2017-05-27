@@ -4,8 +4,8 @@ import Platform.Cmd exposing (Cmd, none)
 import Platform.Sub exposing (Sub, none)
 import Navigation exposing (Location)
 import Keyboard exposing (KeyCode, presses)
-import Model exposing (Model, initModel, setInput, getInput, setSuggestions, flushSuggestions
-                      , setPhotoUrls, setChosenSuggestion, nextPhotoUrl, prevPhotoUrl, setRoute, toggleSecondaryControls)
+import Model exposing (Model, initModel, flushSuggestions, setChosenSuggestion, toggleSecondaryControls, setSuggestions)
+import Photos exposing (Photos, setPhotoUrls, nextPhotoUrl, prevPhotoUrl)
 import Suggestion exposing (Suggestion, RawSuggestion, photoCommand)
 import Msg exposing (Msg(..))
 import Direction exposing (Direction(..))
@@ -42,32 +42,39 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     PlaceInput input ->
-      ((Model.setInput input model), (placeInput input))
+      ({ model | input = input }, (placeInput input))
     PlaceSuggestions suggs ->
       ((Model.setSuggestions suggs model), Cmd.none)
     PhotoUrls urls ->
-      ((Model.setPhotoUrls urls model), Cmd.none)
+      let
+        photos = Photos.setPhotoUrls urls model.photos
+      in
+        ({ model | photos = photos, isLoading = False }, Cmd.none)
     SwitchPhoto dir ->
-      case dir of
-        Right ->
-          (Model.nextPhotoUrl model, Cmd.none)
-        Left ->
-          (Model.prevPhotoUrl model, Cmd.none)
+      let
+        photos = 
+          case dir of
+            Right ->
+              Photos.nextPhotoUrl model.photos
+            Left ->
+              Photos.prevPhotoUrl model.photos
+      in
+        ({ model | photos = photos }, Cmd.none)      
     SelectSuggestion sugg ->
       ((Model.setChosenSuggestion sugg model), (Suggestion.photoCommand getPhotosBySuggestion sugg))
     FreeTextSearch text ->
-      ((Model.flushSuggestions model), getPhotosByFreeText text) --Maybe just use getInput here too
+      ((Model.flushSuggestions model), getPhotosByFreeText text)
     ChangeView location ->
       let
         newRoute = parseLocation location
       in
-        ((Model.setRoute newRoute model), Cmd.none)
+        ({ model | route = newRoute }, Cmd.none)
     KeyPressed code ->
       case code of
-        13 -> ((Model.flushSuggestions model), getPhotosByFreeText (Model.getInput model))
+        13 -> ((Model.flushSuggestions model), getPhotosByFreeText (model.input))
         27 -> ((Model.flushSuggestions model), Cmd.none)
-        37 -> (Model.prevPhotoUrl model, Cmd.none)
-        39 -> (Model.nextPhotoUrl model, Cmd.none)
+        37 -> ({ model | photos = (Photos.prevPhotoUrl model.photos)}, Cmd.none)
+        39 -> ({ model | photos = (Photos.nextPhotoUrl model.photos)}, Cmd.none)
         _ -> (model, Cmd.none)
     ToggleSecondaryPhotoControls ->
       ((Model.toggleSecondaryControls model), Cmd.none)

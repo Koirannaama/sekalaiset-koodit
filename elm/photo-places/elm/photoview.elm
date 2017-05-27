@@ -4,7 +4,8 @@ import Html exposing (Html, div, input, text, ul, li, button, span)
 import Html.Attributes exposing (class, value, placeholder, classList)
 import Html.Events exposing (onInput, onClick)
 import Element exposing (toHtml, image)
-import Model exposing (Model, getPhotoUrl, getSuggestions, getInput, isLoading, showSecondaryControls)
+import Model exposing (Model)
+import Photos exposing (getPhotos)
 import Suggestion exposing (Suggestion, getDescription)
 import Msg exposing (Msg(..))
 import Direction exposing (Direction(..))
@@ -12,11 +13,12 @@ import Direction exposing (Direction(..))
 view : Model -> Html Msg
 view model =
   let
-    content = photoElement (Model.getPhotoUrl model)
-    suggestions = Model.getSuggestions model
-    userInput = Model.getInput model
-    isLoading = Model.isLoading model
-    showSecondaryControls = Model.showSecondaryControls model
+    photos = Photos.getPhotos model.photos
+    content = photoElement photos.photoUrl
+    suggestions = model.suggestions
+    userInput = model.input
+    isLoading = model.isLoading
+    showSecondaryControls = model.showSecondaryControls
   in 
     div [ class "top-container" ]
       [ topBar suggestions userInput isLoading showSecondaryControls
@@ -85,10 +87,15 @@ suggestionDisplay suggs =
   in
     ul [ class "suggestions place-input-element" ] listItems
 
-photoElement : String -> Html Msg
-photoElement url =
-  Element.image 1000 1000 url
-  |> Element.toHtml
+photoElement : Maybe String -> Html Msg
+photoElement photoUrl =
+  let 
+    url = case photoUrl of
+            Just url -> url
+            Nothing -> "" --TODO: Something more sensible
+  in
+    Element.image 1000 1000 url
+    |> Element.toHtml
 
 navButtons : Html Msg
 navButtons =
