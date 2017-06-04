@@ -19,3 +19,10 @@ parseLocation location =
             route
         Nothing ->
             NotFoundRoute
+
+photoPath : String
+photoPath = ""
+
+
+galleryPath : String
+galleryPath = "#gallery"

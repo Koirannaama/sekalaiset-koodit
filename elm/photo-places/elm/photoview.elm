@@ -1,7 +1,7 @@
 module PhotoView exposing (view)
 
-import Html exposing (Html, div, input, text, ul, li, button, span)
-import Html.Attributes exposing (class, value, placeholder, classList)
+import Html exposing (Html, div, input, text, ul, li, button, span, form)
+import Html.Attributes exposing (class, value, placeholder, classList, href, action)
 import Html.Events exposing (onInput, onClick)
 import Element exposing (toHtml, image)
 import Model exposing (Model)
@@ -9,6 +9,7 @@ import Photos exposing (getPhotos)
 import Suggestion exposing (Suggestion, getDescription)
 import Msg exposing (Msg(..))
 import Direction exposing (Direction(..))
+import Routing exposing (galleryPath, photoPath)
 
 view : Model -> Html Msg
 view model =
@@ -97,8 +98,9 @@ photoElement photoUrl =
 navButtons : Html Msg
 navButtons =
   div [ class "col-md-3 col-xs-4 text-right nav-button-container" ] 
-    [ button [ class "button" ] [ text "Search" ]
-    , button [ class "button" ] [ text "Gallery" ]
+    -- TODO: replace forms with links
+    [ form [ class "nav-form", action photoPath] [button [ class "button" ] [ text "Search" ]]
+    , form [ class "nav-form", action galleryPath] [button [ class "button" ] [ text "Gallery" ]]
     ]
 
 activityIndicator : Bool -> Html Msg

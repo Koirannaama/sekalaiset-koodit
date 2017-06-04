@@ -178,3 +178,7 @@ li:hover {
 .open {
   height: 40px;
 }
+
+.nav-form {
+  display: inline;
+}
