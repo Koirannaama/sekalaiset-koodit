@@ -14,42 +14,38 @@ view : Model -> Html Msg
 view model =
   let
     photos = Photos.getPhotos model.photos
+    topBarControls =
+      div [ class "col-md-12 col-xs-12 row top-bar-controls no-side-pad" ]
+        [ secondaryPhotoControls model.showSecondaryControls photos.currentPhotoNumber photos.numberOfPhotos
+        , activityIndicator model.isLoading
+        , searchElement model.suggestions model.input
+        , photoButtons model.input
+        , navButtons
+        ]
     content = photoElement photos.photoUrl
-    suggestions = model.suggestions
-    userInput = model.input
-    isLoading = model.isLoading
-    showSecondaryControls = model.showSecondaryControls
   in 
     div [ class "top-container" ]
-      [ topBar suggestions userInput isLoading showSecondaryControls
+      [ topBar topBarControls
       , content
       ]
 
-topBar : List Suggestion -> String -> Bool -> Bool -> Html Msg
-topBar suggestions userInput isLoading secondaryControlsVisible =
-  let
-    photoButtons =
-      div [ class "col-md-2 col-xs-3 photo-button-container" ] 
-        [ searchButton userInput
-        , switchPhotoButton Left
-        , switchPhotoButton Right
-        ]
-    controls =
-      div [ class "col-md-12 col-xs-12 row top-bar-controls no-side-pad" ]
-        [ secondaryPhotoControls secondaryControlsVisible
-        , activityIndicator isLoading
-        , searchElement suggestions userInput
-        , photoButtons
-        , navButtons
-        ]
-  in
-    div [ class "top-bar no-side-pad row col-md-12" ] [ controls ]
+topBar : Html Msg -> Html Msg
+topBar controls =
+  div [ class "top-bar no-side-pad row col-md-12" ] [ controls ]
 
 searchButton : String -> Html Msg
 searchButton input =
   button 
     [ class "button search-button col-md-2 col-xs-2", onClick (FreeTextSearch input)] 
     [ span [ class "glyphicon glyphicon-search" ] [] ]
+
+photoButtons : String -> Html Msg
+photoButtons userInput =
+  div [ class "col-md-2 col-xs-3 photo-button-container" ] 
+    [ searchButton userInput
+    , switchPhotoButton Left
+    , switchPhotoButton Right
+    ]
 
 switchPhotoButton : Direction -> Html Msg
 switchPhotoButton dir =
@@ -90,9 +86,10 @@ suggestionDisplay suggs =
 photoElement : Maybe String -> Html Msg
 photoElement photoUrl =
   let 
-    url = case photoUrl of
-            Just url -> url
-            Nothing -> "" --TODO: Something more sensible
+    url = 
+      case photoUrl of
+        Just url -> url
+        Nothing -> "" --TODO: Something more sensible
   in
     Element.image 1000 1000 url
     |> Element.toHtml
@@ -114,16 +111,17 @@ activityIndicator isVisible =
       [ class "col-md-4 col-xs-1 activity-indicator-container full-height" ] 
       [ div [ activityIndicatorClasses ] [] ]
 
-secondaryPhotoControls : Bool -> Html Msg
-secondaryPhotoControls isVisible = 
+secondaryPhotoControls : Bool -> Int -> Int-> Html Msg
+secondaryPhotoControls isVisible photoNumber totalPhotos = 
   let
-    classes = classList [("row secondary-photo-controls", True), ("slide-hidden", not isVisible), ("slide-open", isVisible)]
+    classes = classList [("row secondary-photo-controls slide", True), ("closed", not isVisible), ("open", isVisible)]
+    photoNumberText = "Photo " ++ (toString photoNumber) ++ " / " ++ (toString totalPhotos)
   in  
     div [ classes ] 
       [ div [ class "col-md-12 toggle-button-container" ] [ toggleSecondaryControlsButton isVisible ]
       , div 
         [ classList [("col-md-12 sec-content", True), ("hidden", not isVisible)]] 
-        [ text "Image 1 / 13" ]
+        [ text photoNumberText ]
       ]
 
 toggleSecondaryControlsButton : Bool -> Html Msg

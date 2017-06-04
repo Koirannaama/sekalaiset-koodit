@@ -15,7 +15,7 @@ init = Photos { photoUrls = [], currentPhotoNumber = 0 }
 
 setPhotoUrls : List String -> Photos -> Photos
 setPhotoUrls urls (Photos p) =
-  Photos { p | photoUrls = urls }
+  Photos { p | photoUrls = urls, currentPhotoNumber = 1 }
 
 firstToLast : List a -> List a
 firstToLast list =
