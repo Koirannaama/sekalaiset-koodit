@@ -10,6 +10,7 @@ import Suggestion exposing (Suggestion, getDescription)
 import Msg exposing (Msg(..))
 import Direction exposing (Direction(..))
 import Routing exposing (galleryPath, photoPath)
+import Components exposing (iconButton)
 
 view : Model -> Html Msg
 view model =
@@ -41,9 +42,10 @@ topBar controls =
 
 searchButton : String -> Html Msg
 searchButton input =
-  button 
-    [ class "button search-button col-md-2 col-xs-2", onClick (FreeTextSearch input)] 
-    [ span [ class "glyphicon glyphicon-search" ] [] ]
+  iconButton
+    [ class "button search-button col-md-2 col-xs-2"
+    , onClick (FreeTextSearch input) ]
+    (class "glyphicon glyphicon-search")
 
 photoButtons : String -> Html Msg
 photoButtons userInput =
@@ -60,9 +62,10 @@ switchPhotoButton dir =
       case dir of
         Left -> "glyphicon glyphicon-arrow-left"
         Right -> "glyphicon glyphicon-arrow-right"
-    icon = span [ class iconClass ] []
   in
-    button [ class "button col-md-5 col-xs-5", onClick (SwitchPhoto dir) ] [ icon ]
+    iconButton 
+      [ class "button col-md-5 col-xs-5", onClick (SwitchPhoto dir) ]
+      (class iconClass)
 
 searchElement : List Suggestion -> String -> Html Msg
 searchElement suggestions userInput =
@@ -137,16 +140,19 @@ toggleSecondaryControlsButton isIconUp =
   let
     iconClasses = classList [("glyphicon glyphicon-chevron-up", isIconUp), ("glyphicon glyphicon-chevron-down", not isIconUp)]
   in
-    button 
-      [ onClick ToggleSecondaryPhotoControls, class "toggle-sec-controls col-md-2 col-md-offset-5" ] 
-      [ span [ iconClasses ] [] ]
+    iconButton
+      [ onClick ToggleSecondaryPhotoControls
+      , class "toggle-sec-controls col-md-2 col-md-offset-5" ]
+      iconClasses
 
 saveToGalleryButton : String -> Html Msg
-saveToGalleryButton photoUrl = 
-  button [ class "col-md-1 button btn-secondary", onClick (SavePhoto photoUrl) ] 
-    [ span [ class "glyphicon glyphicon-floppy-disk" ] [] ]
+saveToGalleryButton photoUrl =
+  iconButton
+    [ class "col-md-1 button btn-secondary", onClick (SavePhoto photoUrl) ]
+    (class "glyphicon glyphicon-floppy-disk")
 
 downloadButton : Html Msg
 downloadButton =
-  button [ class "col-md-1 button btn-secondary" ] 
-    [ span [ class "glyphicon glyphicon-download-alt" ] [] ]
+  iconButton 
+    [ class "col-md-1 button btn-secondary" ] 
+    (class "glyphicon glyphicon-download-alt")
