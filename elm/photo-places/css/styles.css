@@ -81,6 +81,16 @@ body {
   border-bottom: 3px solid white;
 }
 
+.btn-secondary {
+  border: none;
+  background-color: inherit;
+}
+
+.btn-secondary:hover {
+  border: none;
+  color: rgb(66, 194, 244);
+}
+
 /*Override Elm's inline styles*/
 img {
   margin-left: auto     !important;
@@ -157,10 +167,15 @@ li:hover {
   padding-right: 0;
 }
 
+.toggle-button-container {
+  height: 35%;
+}
+
 .sec-content {
+  height: 65%;
   color: rgb(225, 228, 234);
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .slide {

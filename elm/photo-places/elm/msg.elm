@@ -16,3 +16,4 @@ type Msg =
   | ChangeView Location
   | KeyPressed KeyCode
   | ToggleSecondaryPhotoControls
+  | SavePhoto String

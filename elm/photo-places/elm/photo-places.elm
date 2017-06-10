@@ -49,7 +49,7 @@ update msg model =
       let
         photos = Photos.setPhotoUrls urls model.photos
       in
-        ({ model | photos = photos, isLoading = False }, Cmd.none)
+        ({ model | photos = photos, isLoading = False, showSecondaryControls = True }, Cmd.none)
     SwitchPhoto dir ->
       let
         photos = 
@@ -78,6 +78,8 @@ update msg model =
         _ -> (model, Cmd.none)
     ToggleSecondaryPhotoControls ->
       ((Model.toggleSecondaryControls model), Cmd.none)
+    SavePhoto url ->
+      (model, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

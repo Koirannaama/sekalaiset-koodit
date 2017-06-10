@@ -25,7 +25,7 @@ initModel route =
         , chosenSuggestion = Nothing
         , route = route
         , isLoading = False
-        , showSecondaryControls = True
+        , showSecondaryControls = False
         , photos = init
         }
 

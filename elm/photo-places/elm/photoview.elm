@@ -15,19 +15,24 @@ view : Model -> Html Msg
 view model =
   let
     photos = Photos.getPhotos model.photos
-    topBarControls =
-      div [ class "col-md-12 col-xs-12 row top-bar-controls no-side-pad" ]
-        [ secondaryPhotoControls model.showSecondaryControls photos.currentPhotoNumber photos.numberOfPhotos
-        , activityIndicator model.isLoading
-        , searchElement model.suggestions model.input
-        , photoButtons model.input
-        , navButtons
-        ]
-    content = photoElement photos.photoUrl
+    toBarControlContainer = div [ class "col-md-12 col-xs-12 row top-bar-controls no-side-pad" ]
+    topBarControlElements = 
+      [ activityIndicator model.isLoading
+      , searchElement model.suggestions model.input
+      , photoButtons model.input
+      , navButtons
+      ]
+    topBarControls = 
+      case photos.photoUrl of 
+        Just url -> 
+          toBarControlContainer 
+            (secondaryPhotoControls model.showSecondaryControls photos.currentPhotoNumber photos.numberOfPhotos model.input
+            :: topBarControlElements)
+        Nothing -> toBarControlContainer topBarControlElements
   in 
     div [ class "top-container" ]
       [ topBar topBarControls
-      , content
+      , photoElement photos.photoUrl
       ]
 
 topBar : Html Msg -> Html Msg
@@ -113,17 +118,18 @@ activityIndicator isVisible =
       [ class "col-md-4 col-xs-1 activity-indicator-container full-height" ] 
       [ div [ activityIndicatorClasses ] [] ]
 
-secondaryPhotoControls : Bool -> Int -> Int-> Html Msg
-secondaryPhotoControls isVisible photoNumber totalPhotos = 
+secondaryPhotoControls : Bool -> Int -> Int-> String -> Html Msg
+secondaryPhotoControls isVisible photoNumber totalPhotos photoUrl = 
   let
     classes = classList [("row secondary-photo-controls slide", True), ("closed", not isVisible), ("open", isVisible)]
     photoNumberText = "Photo " ++ (toString photoNumber) ++ " / " ++ (toString totalPhotos)
   in  
     div [ classes ] 
-      [ div [ class "col-md-12 toggle-button-container" ] [ toggleSecondaryControlsButton isVisible ]
-      , div 
-        [ classList [("col-md-12 sec-content", True), ("hidden", not isVisible)]] 
-        [ text photoNumberText ]
+      [ div [ class "row col-md-12 toggle-button-container" ] [ toggleSecondaryControlsButton isVisible ]
+      , div [ classList [("row col-md-12 sec-content", True), ("hidden", not isVisible)]] 
+          [ span [ class "col-md-3" ] [ text photoNumberText ]
+          , saveToGalleryButton photoUrl
+          , downloadButton ]
       ]
 
 toggleSecondaryControlsButton : Bool -> Html Msg
@@ -134,3 +140,13 @@ toggleSecondaryControlsButton isIconUp =
     button 
       [ onClick ToggleSecondaryPhotoControls, class "toggle-sec-controls col-md-2 col-md-offset-5" ] 
       [ span [ iconClasses ] [] ]
+
+saveToGalleryButton : String -> Html Msg
+saveToGalleryButton photoUrl = 
+  button [ class "col-md-1 button btn-secondary", onClick (SavePhoto photoUrl) ] 
+    [ span [ class "glyphicon glyphicon-floppy-disk" ] [] ]
+
+downloadButton : Html Msg
+downloadButton =
+  button [ class "col-md-1 button btn-secondary" ] 
+    [ span [ class "glyphicon glyphicon-download-alt" ] [] ]
