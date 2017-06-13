@@ -11,7 +11,6 @@ matchers =
         , map GalleryRoute (s "gallery")
         ]
 
-
 parseLocation : Location -> Route
 parseLocation location =
     case (parseHash matchers location) of
@@ -22,7 +21,6 @@ parseLocation location =
 
 photoPath : String
 photoPath = ""
-
 
 galleryPath : String
 galleryPath = "#gallery"

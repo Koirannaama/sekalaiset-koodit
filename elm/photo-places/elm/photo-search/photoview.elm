@@ -125,15 +125,24 @@ secondaryPhotoControls : Bool -> Int -> Int-> String -> Html Msg.Msg
 secondaryPhotoControls isVisible photoNumber totalPhotos photoUrl = 
   let
     classes = classList [("row secondary-photo-controls slide", True), ("closed", not isVisible), ("open", isVisible)]
-    photoNumberText = "Photo " ++ (toString photoNumber) ++ " / " ++ (toString totalPhotos)
   in  
     div [ classes ] 
-      [ div [ class "row col-md-12 toggle-button-container" ] [ toggleSecondaryControlsButton isVisible ]
+      [ div [ class "row col-md-12 toggle-button-container" ] 
+          [ toggleSecondaryControlsButton isVisible ]
       , div [ classList [("row col-md-12 sec-content", True), ("hidden", not isVisible)]] 
-          [ span [ class "col-md-3" ] [ text photoNumberText ]
+          [ photoNumberLabel photoNumber totalPhotos
           , saveToGalleryButton photoUrl
           , downloadButton ]
       ]
+
+photoNumberLabel : Int -> Int -> Html Msg.Msg
+photoNumberLabel current total =
+  let
+    numberText = "Photo " ++ (toString current) ++ " / " ++ (toString total)
+  in
+    div [ class "col-md-3 number-label-container full-height" ] [
+      span [ class "number-label" ] [ text numberText ] 
+    ]
 
 toggleSecondaryControlsButton : Bool -> Html Msg.Msg
 toggleSecondaryControlsButton isIconUp =
