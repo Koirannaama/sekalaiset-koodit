@@ -4,15 +4,15 @@ import Html exposing (Html, div, input, text, ul, li, button, span, form)
 import Html.Attributes exposing (class, value, placeholder, classList, href, action)
 import Html.Events exposing (onInput, onClick)
 import Element exposing (toHtml, image)
-import Model exposing (Model)
 import Photos exposing (getPhotos)
 import Suggestion exposing (Suggestion, getDescription)
 import Msg exposing (Msg(..))
+import PhotoModel exposing (Model, Msg(..))
 import Direction exposing (Direction(..))
 import Routing exposing (galleryPath, photoPath)
 import Components exposing (iconButton)
 
-view : Model -> Html Msg
+view : Model -> Html Msg.Msg
 view model =
   let
     photos = Photos.getPhotos model.photos
@@ -36,18 +36,18 @@ view model =
       , photoElement photos.photoUrl
       ]
 
-topBar : Html Msg -> Html Msg
+topBar : Html Msg.Msg -> Html Msg.Msg
 topBar controls =
   div [ class "top-bar no-side-pad row col-md-12" ] [ controls ]
 
-searchButton : String -> Html Msg
+searchButton : String -> Html Msg.Msg
 searchButton input =
   iconButton
     [ class "button search-button col-md-2 col-xs-2"
-    , onClick (FreeTextSearch input) ]
+    , onClick (PhotoMsg (FreeTextSearch input)) ]
     (class "glyphicon glyphicon-search")
 
-photoButtons : String -> Html Msg
+photoButtons : String -> Html Msg.Msg
 photoButtons userInput =
   div [ class "col-md-2 col-xs-3 photo-button-container" ] 
     [ searchButton userInput
@@ -55,7 +55,7 @@ photoButtons userInput =
     , switchPhotoButton Right
     ]
 
-switchPhotoButton : Direction -> Html Msg
+switchPhotoButton : Direction -> Html Msg.Msg
 switchPhotoButton dir =
   let
     iconClass =
@@ -64,15 +64,15 @@ switchPhotoButton dir =
         Right -> "glyphicon glyphicon-arrow-right"
   in
     iconButton 
-      [ class "button col-md-5 col-xs-5", onClick (SwitchPhoto dir) ]
+      [ class "button col-md-5 col-xs-5", onClick (PhotoMsg (SwitchPhoto dir)) ]
       (class iconClass)
 
-searchElement : List Suggestion -> String -> Html Msg
+searchElement : List Suggestion -> String -> Html Msg.Msg
 searchElement suggestions userInput =
   let
     inputBox =
       input [ class "input-box place-input-element"
-            , onInput PlaceInput
+            , onInput (\s -> PhotoMsg (PlaceInput s))
             , value userInput
             , placeholder "Search for location" ] []
     children =
@@ -82,17 +82,17 @@ searchElement suggestions userInput =
   in
     div [ class "col-md-3 col-xs-4 search-element" ] children
 
-suggestionDisplay : List Suggestion -> Html Msg
+suggestionDisplay : List Suggestion -> Html Msg.Msg
 suggestionDisplay suggs =
   let
     listItem suggestion =
-      li [ onClick (SelectSuggestion suggestion) ] 
+      li [ onClick (PhotoMsg (SelectSuggestion suggestion)) ] 
          [ text (Suggestion.getDescription suggestion) ]
     listItems = List.map listItem suggs
   in
     ul [ class "suggestions place-input-element" ] listItems
 
-photoElement : Maybe String -> Html Msg
+photoElement : Maybe String -> Html Msg.Msg
 photoElement photoUrl =
   let 
     url = 
@@ -103,7 +103,7 @@ photoElement photoUrl =
     Element.image 1000 1000 url
     |> Element.toHtml
 
-navButtons : Html Msg
+navButtons : Html Msg.Msg
 navButtons =
   div [ class "col-md-3 col-xs-4 text-right nav-button-container" ] 
     -- TODO: replace forms with links
@@ -111,7 +111,7 @@ navButtons =
     , form [ class "nav-form", action galleryPath] [button [ class "button" ] [ text "Gallery" ]]
     ]
 
-activityIndicator : Bool -> Html Msg
+activityIndicator : Bool -> Html Msg.Msg
 activityIndicator isVisible =
   let
     activityIndicatorClasses = 
@@ -121,7 +121,7 @@ activityIndicator isVisible =
       [ class "col-md-4 col-xs-1 activity-indicator-container full-height" ] 
       [ div [ activityIndicatorClasses ] [] ]
 
-secondaryPhotoControls : Bool -> Int -> Int-> String -> Html Msg
+secondaryPhotoControls : Bool -> Int -> Int-> String -> Html Msg.Msg
 secondaryPhotoControls isVisible photoNumber totalPhotos photoUrl = 
   let
     classes = classList [("row secondary-photo-controls slide", True), ("closed", not isVisible), ("open", isVisible)]
@@ -135,23 +135,23 @@ secondaryPhotoControls isVisible photoNumber totalPhotos photoUrl =
           , downloadButton ]
       ]
 
-toggleSecondaryControlsButton : Bool -> Html Msg
+toggleSecondaryControlsButton : Bool -> Html Msg.Msg
 toggleSecondaryControlsButton isIconUp =
   let
     iconClasses = classList [("glyphicon glyphicon-chevron-up", isIconUp), ("glyphicon glyphicon-chevron-down", not isIconUp)]
   in
     iconButton
-      [ onClick ToggleSecondaryPhotoControls
+      [ onClick (PhotoMsg ToggleSecondaryPhotoControls)
       , class "toggle-sec-controls col-md-2 col-md-offset-5" ]
       iconClasses
 
-saveToGalleryButton : String -> Html Msg
+saveToGalleryButton : String -> Html Msg.Msg
 saveToGalleryButton photoUrl =
   iconButton
     [ class "col-md-1 button btn-secondary", onClick (SavePhoto photoUrl) ]
     (class "glyphicon glyphicon-floppy-disk")
 
-downloadButton : Html Msg
+downloadButton : Html Msg.Msg
 downloadButton =
   iconButton 
     [ class "col-md-1 button btn-secondary" ] 

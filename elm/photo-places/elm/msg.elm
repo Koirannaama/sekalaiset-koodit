@@ -1,19 +1,9 @@
 module Msg exposing (Msg(..))
 
-import Suggestion exposing (Suggestion, RawSuggestion)
-import Keyboard exposing (KeyCode)
 import Navigation exposing (Location)
-import Direction exposing (Direction)
-
+import PhotoModel exposing (Msg)
 
 type Msg =
-  PlaceInput String
-  | PlaceSuggestions (List RawSuggestion)
-  | PhotoUrls (List String)
-  | SwitchPhoto Direction
-  | SelectSuggestion Suggestion
-  | FreeTextSearch String
+  PhotoMsg PhotoModel.Msg
   | ChangeView Location
-  | KeyPressed KeyCode
-  | ToggleSecondaryPhotoControls
   | SavePhoto String

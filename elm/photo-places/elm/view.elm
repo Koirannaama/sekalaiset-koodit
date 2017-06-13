@@ -9,6 +9,6 @@ import Msg exposing (Msg)
 getView : Model -> Html Msg
 getView model =
   case model.route of
-    PhotoRoute -> PhotoView.view model
+    PhotoRoute -> PhotoView.view model.photoModel
     GalleryRoute -> GalleryView.view
     NotFoundRoute -> GalleryView.view

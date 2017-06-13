@@ -1,17 +1,13 @@
-module Model exposing (Model, Route(..), initModel, flushSuggestions, setChosenSuggestion, setSuggestions, toggleSecondaryControls)
+module Model exposing (..)
 
 import Suggestion exposing (Suggestion, RawSuggestion, getDescription, suggestion)
 import Photos exposing (Photos, PhotoData, init, nextPhotoUrl, prevPhotoUrl, getPhotos)
+import PhotoModel exposing (Model, initModel)
 
 type alias Model =
-    { input: String
-    , suggestions: (List Suggestion)
-    , chosenSuggestion: Maybe Suggestion
-    , route: Route
-    , isLoading: Bool
-    , showSecondaryControls: Bool
-    , photos: Photos
-    }
+  { photoModel: PhotoModel.Model
+  , route: Route
+  }
 
 type Route =
   PhotoRoute
@@ -20,38 +16,6 @@ type Route =
 
 initModel : Route -> Model 
 initModel route = 
-   { input = ""
-        , suggestions = []
-        , chosenSuggestion = Nothing
-        , route = route
-        , isLoading = False
-        , showSecondaryControls = False
-        , photos = init
-        }
-
-setSuggestions : List RawSuggestion -> Model -> Model
-setSuggestions rawSuggs m =
-  let
-    suggestions = List.map Suggestion.suggestion rawSuggs
-  in
-    { m | suggestions = suggestions }
-
-flushSuggestions : Model -> Model
-flushSuggestions  m = { m | suggestions = [] }
-
-setChosenSuggestion : Suggestion -> Model -> Model
-setChosenSuggestion suggestion m =
-  let
-    chosenSugg = Just suggestion
-  in
-     { chosenSuggestion = chosenSugg
-          , input = Suggestion.getDescription suggestion
-          , suggestions = []
-          , route = m.route
-          , isLoading = True
-          , showSecondaryControls = m.showSecondaryControls
-          , photos = m.photos
-          }
-
-toggleSecondaryControls : Model -> Model
-toggleSecondaryControls m = { m | showSecondaryControls = not m.showSecondaryControls }
+   { photoModel = PhotoModel.initModel
+   , route = route
+   }
