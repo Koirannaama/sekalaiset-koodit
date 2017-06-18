@@ -1,11 +1,11 @@
 module Model exposing (..)
 
-import Suggestion exposing (Suggestion, RawSuggestion, getDescription, suggestion)
-import Photos exposing (Photos, PhotoData, init, nextPhotoUrl, prevPhotoUrl, getPhotos)
 import PhotoModel exposing (Model, initModel)
+import GalleryModel exposing (Model, initModel)
 
 type alias Model =
   { photoModel: PhotoModel.Model
+  , galleryModel: GalleryModel.Model
   , route: Route
   }
 
@@ -17,5 +17,6 @@ type Route =
 initModel : Route -> Model 
 initModel route = 
    { photoModel = PhotoModel.initModel
+   , galleryModel = GalleryModel.initModel
    , route = route
    }

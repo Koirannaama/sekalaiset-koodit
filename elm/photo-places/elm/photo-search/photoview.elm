@@ -8,6 +8,7 @@ import Photos exposing (getPhotos)
 import Suggestion exposing (Suggestion, getDescription)
 import Msg exposing (Msg(..))
 import PhotoModel exposing (Model, Msg(..))
+import GalleryModel exposing (Msg(SavePhoto))
 import Direction exposing (Direction(..))
 import Routing exposing (galleryPath, photoPath)
 import Components exposing (iconButton)
@@ -157,7 +158,7 @@ toggleSecondaryControlsButton isIconUp =
 saveToGalleryButton : String -> Html Msg.Msg
 saveToGalleryButton photoUrl =
   iconButton
-    [ class "col-md-1 button btn-secondary", onClick (SavePhoto photoUrl) ]
+    [ class "col-md-1 button btn-secondary", onClick (GalleryMsg (SavePhoto photoUrl)) ]
     (class "glyphicon glyphicon-floppy-disk")
 
 downloadButton : Html Msg.Msg

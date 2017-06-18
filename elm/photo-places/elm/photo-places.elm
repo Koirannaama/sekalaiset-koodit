@@ -10,6 +10,7 @@ import View exposing (getView)
 import Routing exposing (parseLocation)
 import Ports exposing (..)
 import PhotoModel exposing (update, Msg(PhotoUrls, PlaceSuggestions, KeyPressed))
+import GalleryModel exposing (update)
 
 init : Location -> (Model, Cmd Msg.Msg)
 init loc = 
@@ -35,13 +36,16 @@ update msg model =
         (newPhotoModel, cmd) = PhotoModel.update photoMsg model.photoModel
       in
         ({ model | photoModel = newPhotoModel}, (Cmd.map PhotoMsg cmd))
+    GalleryMsg galleryMsg ->
+      let
+        (newGalleryModel, cmd) = GalleryModel.update galleryMsg model.galleryModel
+      in
+        ({ model | galleryModel = newGalleryModel}, (Cmd.map GalleryMsg cmd))
     ChangeView location ->
       let
         newRoute = parseLocation location
       in
         ({ model | route = newRoute }, Cmd.none)
-    SavePhoto url ->
-      (model, Cmd.none)
 
 subscriptions : Model -> Sub Msg.Msg
 subscriptions model =
