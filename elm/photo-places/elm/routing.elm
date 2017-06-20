@@ -20,7 +20,7 @@ parseLocation location =
             NotFoundRoute
 
 photoPath : String
-photoPath = ""
+photoPath = "#"
 
 galleryPath : String
 galleryPath = "#gallery"

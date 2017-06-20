@@ -6,40 +6,32 @@ import Html.Events exposing (onInput, onClick)
 import Element exposing (toHtml, image)
 import Photos exposing (getPhotos)
 import Suggestion exposing (Suggestion, getDescription)
-import Msg exposing (Msg(..))
+import Msg exposing (Msg(PhotoMsg, GalleryMsg))
 import PhotoModel exposing (Model, Msg(..))
 import GalleryModel exposing (Msg(SavePhoto))
 import Direction exposing (Direction(..))
-import Routing exposing (galleryPath, photoPath)
-import Components exposing (iconButton)
+import Components exposing (iconButton, topBar)
 
 view : Model -> Html Msg.Msg
 view model =
   let
     photos = Photos.getPhotos model.photos
-    toBarControlContainer = div [ class "col-md-12 col-xs-12 row top-bar-controls no-side-pad" ]
-    topBarControlElements = 
+    topBarControls = 
       [ activityIndicator model.isLoading
       , searchElement model.suggestions model.input
       , photoButtons model.input
-      , navButtons
+      --, navButtons
       ]
-    topBarControls = 
+    topBarElem = topBar topBarControls
+    slidingControls = secondaryPhotoControls model.showSecondaryControls photos.currentPhotoNumber photos.numberOfPhotos model.input
+    elements = 
       case photos.photoUrl of 
         Just url -> 
-          toBarControlContainer 
-            (secondaryPhotoControls model.showSecondaryControls photos.currentPhotoNumber photos.numberOfPhotos model.input
-            :: topBarControlElements)
-        Nothing -> toBarControlContainer topBarControlElements
+          [slidingControls, topBarElem, (photoElement photos.photoUrl)]
+        Nothing -> 
+          [topBarElem, (photoElement photos.photoUrl)]
   in 
-    div [ class "top-container" ]
-      [ topBar topBarControls
-      , photoElement photos.photoUrl
-      ]
-
-topBar : Html Msg.Msg -> Html Msg.Msg
-topBar controls =
-  div [ class "top-bar no-side-pad row col-md-12" ] [ controls ]
+    div [ class "top-container" ] elements
 
 searchButton : String -> Html Msg.Msg
 searchButton input =
@@ -50,7 +42,7 @@ searchButton input =
 
 photoButtons : String -> Html Msg.Msg
 photoButtons userInput =
-  div [ class "col-md-2 col-xs-3 photo-button-container" ] 
+  div [ class "col-md-2 col-xs-6 photo-button-container" ] 
     [ searchButton userInput
     , switchPhotoButton Left
     , switchPhotoButton Right
@@ -81,7 +73,7 @@ searchElement suggestions userInput =
         [] -> [inputBox]
         ss -> [inputBox, (suggestionDisplay ss)]
   in
-    div [ class "col-md-3 col-xs-4 search-element" ] children
+    div [ class "col-md-4 col-xs-5 search-element" ] children
 
 suggestionDisplay : List Suggestion -> Html Msg.Msg
 suggestionDisplay suggs =
@@ -104,14 +96,6 @@ photoElement photoUrl =
     Element.image 1000 1000 url
     |> Element.toHtml
 
-navButtons : Html Msg.Msg
-navButtons =
-  div [ class "col-md-3 col-xs-4 text-right nav-button-container" ] 
-    -- TODO: replace forms with links
-    [ form [ class "nav-form", action photoPath] [button [ class "button" ] [ text "Search" ]]
-    , form [ class "nav-form", action galleryPath] [button [ class "button" ] [ text "Gallery" ]]
-    ]
-
 activityIndicator : Bool -> Html Msg.Msg
 activityIndicator isVisible =
   let
@@ -119,7 +103,7 @@ activityIndicator isVisible =
       classList [("hidden", not isVisible), ("float-right activity-indicator", True)]
   in
     div 
-      [ class "col-md-4 col-xs-1 activity-indicator-container full-height" ] 
+      [ class "col-md-5 col-xs-1 activity-indicator-container full-height" ] 
       [ div [ activityIndicatorClasses ] [] ]
 
 secondaryPhotoControls : Bool -> Int -> Int-> String -> Html Msg.Msg
@@ -141,7 +125,7 @@ photoNumberLabel current total =
   let
     numberText = "Photo " ++ (toString current) ++ " / " ++ (toString total)
   in
-    div [ class "col-md-3 number-label-container full-height" ] [
+    div [ class "col-md-5 col-xs-5 number-label-container full-height" ] [
       span [ class "number-label" ] [ text numberText ] 
     ]
 
@@ -152,17 +136,17 @@ toggleSecondaryControlsButton isIconUp =
   in
     iconButton
       [ onClick (PhotoMsg ToggleSecondaryPhotoControls)
-      , class "toggle-sec-controls col-md-2 col-md-offset-5" ]
+      , class "toggle-sec-controls col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5" ]
       iconClasses
 
 saveToGalleryButton : String -> Html Msg.Msg
 saveToGalleryButton photoUrl =
   iconButton
-    [ class "col-md-1 button btn-secondary", onClick (GalleryMsg (SavePhoto photoUrl)) ]
+    [ class "col-md-2 button btn-secondary", onClick (GalleryMsg (SavePhoto photoUrl)) ]
     (class "glyphicon glyphicon-floppy-disk")
 
 downloadButton : Html Msg.Msg
 downloadButton =
   iconButton 
-    [ class "col-md-1 button btn-secondary" ] 
+    [ class "col-md-2 button btn-secondary" ] 
     (class "glyphicon glyphicon-download-alt")

@@ -1,7 +1,11 @@
 module GalleryView exposing (..)
 
 import Html exposing (Html, div, input, text)
-import Msg exposing (Msg(..))
+import Html.Attributes exposing (class)
+import Msg exposing (Msg(GalleryMsg))
+--import GalleryModel exposing (Msg(..))
+import Components exposing (topBar)
 
-view : Html Msg
-view = div [] [ text "Here be photos (at some point)." ]
+view : Html Msg.Msg
+view = div [ class "gallery-container"] 
+        [ topBar [] ]

@@ -5,7 +5,8 @@
     "license": "BSD3",
     "source-directories": [
         "./elm",
-        "./elm/photo-search"
+        "./elm/photo-search",
+        "./elm/gallery"
     ],
     "exposed-modules": [],
     "dependencies": {
