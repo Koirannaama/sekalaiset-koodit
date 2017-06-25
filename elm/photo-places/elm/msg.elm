@@ -8,3 +8,4 @@ type Msg =
   PhotoMsg PhotoModel.Msg
   | ChangeView Location
   | GalleryMsg GalleryModel.Msg
+  | ToggleNavMenu

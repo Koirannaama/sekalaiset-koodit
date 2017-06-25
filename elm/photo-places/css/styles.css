@@ -203,6 +203,26 @@ li:hover {
   font-size: 12px;
 }
 
-.nav-form {
-  display: inline;
+.nav-link {
+  line-height: 40px;
+  padding: 0px 10px;
+  color: white;
+}
+
+.nav-link:hover {
+  text-decoration: none;
+  color: rgb(217, 217, 217);
+}
+
+.nav-menu {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  right: 0;
+  top: 40px;
+  background: rgb(66, 194, 244);
+}
+
+.nav-menu-item {
+  display: inline-block;
 }

@@ -7,6 +7,7 @@ type alias Model =
   { photoModel: PhotoModel.Model
   , galleryModel: GalleryModel.Model
   , route: Route
+  , navMenuOpen: Bool
   }
 
 type Route =
@@ -19,4 +20,5 @@ initModel route =
    { photoModel = PhotoModel.initModel
    , galleryModel = GalleryModel.initModel
    , route = route
+   , navMenuOpen = False
    }

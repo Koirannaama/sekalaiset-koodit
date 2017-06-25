@@ -46,6 +46,8 @@ update msg model =
         newRoute = parseLocation location
       in
         ({ model | route = newRoute }, Cmd.none)
+    ToggleNavMenu ->
+      ({ model | navMenuOpen = not model.navMenuOpen }, Cmd.none)
 
 subscriptions : Model -> Sub Msg.Msg
 subscriptions model =

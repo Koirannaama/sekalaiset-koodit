@@ -1,6 +1,6 @@
 module PhotoView exposing (view)
 
-import Html exposing (Html, div, input, text, ul, li, button, span, form)
+import Html exposing (Html, Attribute, div, input, text, ul, li, button, span, form)
 import Html.Attributes exposing (class, value, placeholder, classList, href, action)
 import Html.Events exposing (onInput, onClick)
 import Element exposing (toHtml, image)
@@ -10,17 +10,17 @@ import Msg exposing (Msg(PhotoMsg, GalleryMsg))
 import PhotoModel exposing (Model, Msg(..))
 import GalleryModel exposing (Msg(SavePhoto))
 import Direction exposing (Direction(..))
-import Components exposing (iconButton, topBar)
+import Components exposing (iconButton)
 
-view : Model -> Html Msg.Msg
-view model =
+-- TODO: refactor to make this look nicer
+view : (List (Html Msg.Msg) -> Html Msg.Msg) -> Model -> Html Msg.Msg
+view topBar model =
   let
     photos = Photos.getPhotos model.photos
     topBarControls = 
       [ activityIndicator model.isLoading
       , searchElement model.suggestions model.input
       , photoButtons model.input
-      --, navButtons
       ]
     topBarElem = topBar topBarControls
     slidingControls = secondaryPhotoControls model.showSecondaryControls photos.currentPhotoNumber photos.numberOfPhotos model.input
