@@ -1,0 +1,45 @@
+<h1>
+  {{title}}
+</h1>
+<h3>
+  Get some trees from the list!
+</h3>
+
+<div class="tree-types">
+  <ul>
+    <li *ngFor="let tree of availableTrees">
+      {{ tree.type }}
+      <a href="#" (click)="onSelect(tree, modal)">Get one!</a>
+    </li>
+  </ul>
+</div>
+
+<div *ngIf="usersTrees.length > 0" class="users-trees">
+  <h3>Here is your forest</h3>
+  <tree-component *ngFor="let tree of usersTrees" [tree]="tree">
+    
+  </tree-component>
+</div>
+<forest [trees]="usersTrees"></forest>
+
+<ng-template #modal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Modal title</h4>
+    <button type="button" class="close" aria-label="Cancel tree" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <h3>Create a tree</h3>
+    <div class="selected-tree-type">
+      Type: {{ selectedTree.type }}
+    </div>
+    Height: <input [(ngModel)]="createdTreeHeight">
+    <button (click)=c()>Create</button>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="d('Close click')">Cancel tree</button>
+  </div>
+</ng-template>
