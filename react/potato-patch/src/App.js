@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-//import logo from './logo.svg';
 import './App.css';
+import { initialPotatoPatch, isTileBuyable, plantPotatoAt, buyTileAt } from "./PotatoPatch";
 
 
 class PatchTile extends Component {
@@ -19,6 +19,26 @@ class BuyablePatchTile extends Component {
   }
 }
 
+class PotatoPatchGrid extends Component {
+  render() {
+    let patchTiles = this.props.patch.map((row, i) => {
+      let rowTiles = row.map((tileData, j) => {
+        return isTileBuyable(tileData)
+                ? <BuyablePatchTile tileClicked={() => this.props.buyableTileClicked(i, j)}/>
+                : <PatchTile seedPotatoes={tileData} tileClicked={() =>this.props.patchTileClicked(i,j)}/>;
+      });
+      return <div className="patch-row">{rowTiles}</div>
+    });
+
+    return (
+      <div>
+        {patchTiles}
+      </div>
+    );
+
+  }
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -26,51 +46,28 @@ class App extends Component {
       money: 20,
       seedPotatoes: 5,
       potatoes: 0,
-      patch: [[0, 0], [0, 0]],
+      patch: initialPotatoPatch,
       maxSeedsInTile: 1,
       tilePrice: 5
     };
   }
 
   plantPotatoAt = (x, y) => {
-    let patch = this.state.patch.slice();
-    if (patch[x][y] >= this.state.maxSeedsInTile) {
-      return;
-    }
-    patch[x][y] = 1;
-    this.setState({patch: patch});
+    this.setState({patch: plantPotatoAt(this.state.patch, x, y)});
   };
 
   buyNewTileAt = (x, y) => {
     if (this.state.money < this.state.tilePrice) {
       return;
     }
-
-    let newMoney = this.state.money - this.state.tilePrice;
-    let patch = this.state.patch.slice();
-    if (x >= this.state.patch.length) {
-      let newPatch = this.state.patch.concat([[0]])
-      this.setState({patch: newPatch, money: newMoney});
-    }
-    else {
-      patch[x].push(0)
-      this.setState({patch: patch, money: newMoney});
-    }
+    this.setState({patch: buyTileAt(this.state.patch, x, y)});
   }
 
   render() {
-    let patchTiles = this.state.patch.map((row, i) => {
-      let rowTiles = row.map((seedAmount, j) => <PatchTile seedPotatoes={seedAmount} tileClicked={() => this.plantPotatoAt(i, j)}/>);
-      let buyableTile = <BuyablePatchTile tileClicked={() => this.buyNewTileAt(i, rowTiles.length)}/>;
-      return <div className="patch-row">{rowTiles.concat(buyableTile)}</div>
-    });
-    let lastRow = this.state.patch[this.state.patch.length-1];
-    let buyableRow = <div className="patch-row">{lastRow.map((tile, i) => <BuyablePatchTile tileClicked={() => this.buyNewTileAt(lastRow.length, i)}/>)}</div>;
-
     return (
       <div className="App">
         <div>
-          {patchTiles.concat(buyableRow)}
+          <PotatoPatchGrid patch={this.state.patch} patchTileClicked={this.plantPotatoAt} buyableTileClicked={this.buyNewTileAt}/>
         </div>
       </div>
     );
