@@ -1,0 +1,8 @@
+.resources-container {
+  border: 1px solid rgb(100, 100, 100);
+  width: 12em;
+}
+
+.single-resource-container {
+  margin: 0.5em 0;
+}

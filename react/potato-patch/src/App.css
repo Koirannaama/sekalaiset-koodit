@@ -1,5 +1,12 @@
 .App {
+  display: inline-block;
   text-align: center;
+}
+
+.App > div {
+  float: left;
+  border: 1px solid rgb(150, 150, 150);
+  margin: 0.5em;
 }
 
 .patch-row {

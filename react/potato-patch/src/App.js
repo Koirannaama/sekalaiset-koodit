@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import { initialPotatoPatch, isTileBuyable, plantPotatoAt, buyTileAt } from "./PotatoPatch";
+import { ResourcesView } from "./ResourcesView";
 
 
 class PatchTile extends Component {
@@ -31,7 +32,7 @@ class PotatoPatchGrid extends Component {
     });
 
     return (
-      <div>
+      <div className="patch-grid-container">
         {patchTiles}
       </div>
     );
@@ -53,22 +54,23 @@ class App extends Component {
   }
 
   plantPotatoAt = (x, y) => {
-    this.setState({patch: plantPotatoAt(this.state.patch, x, y)});
+    let newSeeds = this.state.seedPotatoes - 1;
+    this.setState({patch: plantPotatoAt(this.state.patch, x, y), seedPotatoes: newSeeds});
   };
 
   buyNewTileAt = (x, y) => {
     if (this.state.money < this.state.tilePrice) {
       return;
     }
-    this.setState({patch: buyTileAt(this.state.patch, x, y)});
+    let newMoney = this.state.money - this.state.tilePrice;
+    this.setState({patch: buyTileAt(this.state.patch, x, y), money: newMoney});
   }
 
   render() {
     return (
       <div className="App">
-        <div>
-          <PotatoPatchGrid patch={this.state.patch} patchTileClicked={this.plantPotatoAt} buyableTileClicked={this.buyNewTileAt}/>
-        </div>
+        <ResourcesView money={this.state.money} seeds={this.state.seedPotatoes}/>
+        <PotatoPatchGrid patch={this.state.patch} patchTileClicked={this.plantPotatoAt} buyableTileClicked={this.buyNewTileAt}/>
       </div>
     );
   }
