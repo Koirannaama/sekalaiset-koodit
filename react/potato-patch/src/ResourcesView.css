@@ -1,8 +1,17 @@
 .resources-container {
-  border: 1px solid rgb(100, 100, 100);
-  width: 12em;
+  /* border: 1px solid rgb(100, 100, 100); */
+  /* width: 12em; */
 }
 
 .single-resource-container {
   margin: 0.5em 0;
+  text-align: left;
+}
+
+.resource-label {
+  width: 60%;
+  text-align: left;
+  display: inline-block;
+  margin-left: 1em;
+  margin-right: 0.5em;
 }

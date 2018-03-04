@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import './App.css';
 import { initialPotatoPatch, isTileBuyable, plantPotatoAt, buyTileAt } from "./PotatoPatch";
 import { ResourcesView } from "./ResourcesView";
+import { ShopView } from "./ShopView";
 
 
 class PatchTile extends Component {
   getTileText()  {
-    return this.props.seedPotatoes > 0 ? this.props.seedPotatoes : "Plant!";
+    return this.props.seedPotatoes > 0 ? this.props.seedPotatoes + " potato planted!": "Plant!";
   }
 
   render() {
@@ -32,7 +33,7 @@ class PotatoPatchGrid extends Component {
     });
 
     return (
-      <div className="patch-grid-container">
+      <div className="patch-grid-container darker-border-box ">
         {patchTiles}
       </div>
     );
@@ -54,6 +55,7 @@ class App extends Component {
   }
 
   plantPotatoAt = (x, y) => {
+    // Add sanity check
     let newSeeds = this.state.seedPotatoes - 1;
     this.setState({patch: plantPotatoAt(this.state.patch, x, y), seedPotatoes: newSeeds});
   };
@@ -69,7 +71,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <ResourcesView money={this.state.money} seeds={this.state.seedPotatoes}/>
+        <div className="left-side-container">
+          <ResourcesView money={this.state.money} seeds={this.state.seedPotatoes} potatoes={this.state.potatoes}/>
+          <ShopView/>
+        </div>
         <PotatoPatchGrid patch={this.state.patch} patchTileClicked={this.plantPotatoAt} buyableTileClicked={this.buyNewTileAt}/>
       </div>
     );

@@ -3,10 +3,23 @@
   text-align: center;
 }
 
+.darker-border-box {
+  border: 1px solid rgb(222, 222, 222);
+  background-color: rgb(242, 239, 225);
+}
+
 .App > div {
   float: left;
-  border: 1px solid rgb(150, 150, 150);
   margin: 0.5em;
+}
+
+.left-side-container > div {
+  margin-bottom: 1em;
+  width: 15em;
+}
+
+.left-side-container {
+  margin: 0.5em 0;
 }
 
 .patch-row {
