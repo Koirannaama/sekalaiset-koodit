@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import './ShopView.css';
 
+export class ShopTransaction {
+  constructor(potatoes, seedPotatoes) {
+    this.potatoes = potatoes;
+    this.seedPotatoes = seedPotatoes;
+  }
+}
+
 export class ShopView extends Component {
   constructor(props) {
     super(props);
@@ -25,6 +32,19 @@ export class ShopView extends Component {
     this.setState({seedPotatoAmount: event.target.value});
   }
 
+  changeAmount = (event, getStateUpdate) => {
+    let newAmount = parseInt(event.target.value, 10);
+    this.setState(getStateUpdate(newAmount));
+  }
+
+  buyClicked = () => {
+    this.props.itemsBought(new ShopTransaction(this.state.potatoAmount, this.state.seedPotatoAmount), this.calculateTotalCost());
+    this.setState({
+      potatoAmount: 0,
+      seedPotatoAmount: 0
+    });
+  }
+
   render() {
     return (
       <div className="shop-container darker-border-box">
@@ -32,7 +52,8 @@ export class ShopView extends Component {
           <label>Buyable items</label> 
           <div className="single-shop-item">
             <label className="shop-item-label">Seed potatoes (á {this.state.seedPotatoBuyPrice})</label>
-            <input className="item-amount-input" type="number" min="0" value={this.state.seedPotatoAmount} onChange={this.changeSeedPotatoAmount}/>
+            <input className="item-amount-input" type="number" min="0" value={this.state.seedPotatoAmount} 
+                   onChange={(event) => this.changeAmount(event, (amount) => ({seedPotatoAmount: amount}))}/>
           </div>
         </div>
 
@@ -40,12 +61,13 @@ export class ShopView extends Component {
           <label>Sellable items</label> 
           <div className="single-shop-item">
             <label className="shop-item-label">Potatoes (á {this.state.potatoSellPrice})</label>
-            <input className="item-amount-input" type="number" min="0" value={this.state.potatoAmount} onChange={this.changePotatoAmount}/>
+            <input className="item-amount-input" type="number" min="0" value={this.state.potatoAmount} 
+                   onChange={(event) => this.changeAmount(event, (amount) => ({potatoAmount: amount}))}/>
           </div>
         </div>
         <div>
-          <span>Total cost: {this.calculateTotalCost()}</span>
-          <button>Deal!</button>
+          <span className="shop-item-label">Total cost: {this.calculateTotalCost()}</span>
+          <button disabled={!this.props.isBuyEnabled(this.calculateTotalCost())} onClick={this.buyClicked}>Deal!</button>
         </div>
       </div>
     );

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import { initialPotatoPatch, isTileBuyable, plantPotatoAt, buyTileAt } from "./PotatoPatch";
 import { ResourcesView } from "./ResourcesView";
-import { ShopView } from "./ShopView";
+import { ShopView/* , ShopTransaction */ } from "./ShopView";
 
 
 class PatchTile extends Component {
@@ -68,12 +68,24 @@ class App extends Component {
     this.setState({patch: buyTileAt(this.state.patch, x, y), money: newMoney});
   }
 
+  isBuyItemsEnabled = (totalItemCost) => {
+    return this.state.money >= totalItemCost;
+  }
+
+  buyItems = (transaction, cost) => {
+    this.setState({
+      money: this.state.money - cost,
+      seedPotatoes: this.state.seedPotatoes + transaction.seedPotatoes,
+      potatoes: this.state.potatoes - transaction.potatoes
+    });
+  }
+
   render() {
     return (
       <div className="App">
         <div className="left-side-container">
           <ResourcesView money={this.state.money} seeds={this.state.seedPotatoes} potatoes={this.state.potatoes}/>
-          <ShopView/>
+          <ShopView isBuyEnabled={this.isBuyItemsEnabled} itemsBought={this.buyItems}/>
         </div>
         <PotatoPatchGrid patch={this.state.patch} patchTileClicked={this.plantPotatoAt} buyableTileClicked={this.buyNewTileAt}/>
       </div>
