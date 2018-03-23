@@ -27,10 +27,14 @@ function createNewBuyableTiles(grid) {
   return grid.concat([newRow]).map(row => row.concat(buyableTileSymbol));
 }
 
+export function canPlantAt(grid, x, y) {
+  return grid[x][y] === 0;
+}
+
 export function plantPotatoAt(grid, x, y) {
   return grid.map((row, i) => {
     return row.map((tile, j) => {
-      return x === i && y === j && tile === 0
+      return x === i && y === j /* && tile === 0 */
               ? 1
               : tile;
     });

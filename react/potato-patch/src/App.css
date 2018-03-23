@@ -8,9 +8,18 @@
   background-color: rgb(242, 239, 225);
 }
 
-.App > div {
+.top-container > div {
   float: left;
   margin: 0.5em;
+} 
+
+.top-container {
+  display: inline-block;
+}
+
+.bottom-container {
+  text-align: left;
+  margin: 0 0.5em;
 }
 
 .left-side-container > div {

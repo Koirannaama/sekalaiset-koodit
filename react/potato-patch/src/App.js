@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
-import { initialPotatoPatch, isTileBuyable, plantPotatoAt, buyTileAt } from "./PotatoPatch";
+import { initialPotatoPatch, isTileBuyable, plantPotatoAt, buyTileAt, canPlantAt } from "./PotatoPatch";
 import { ResourcesView } from "./ResourcesView";
-import { ShopView/* , ShopTransaction */ } from "./ShopView";
-
+import { ShopView } from "./ShopView";
+import { advance, spring, summer, fall, winter } from "./Seasons";
 
 class PatchTile extends Component {
   getTileText()  {
@@ -50,14 +50,16 @@ class App extends Component {
       potatoes: 0,
       patch: initialPotatoPatch,
       maxSeedsInTile: 1,
-      tilePrice: 5
+      tilePrice: 5,
+      currentSeason: spring
     };
   }
 
   plantPotatoAt = (x, y) => {
-    // Add sanity check
-    let newSeeds = this.state.seedPotatoes - 1;
-    this.setState({patch: plantPotatoAt(this.state.patch, x, y), seedPotatoes: newSeeds});
+    if (canPlantAt(this.state.patch, x, y)) {
+      let newSeeds = this.state.seedPotatoes - 1;
+      this.setState({patch: plantPotatoAt(this.state.patch, x, y), seedPotatoes: newSeeds});
+    }
   };
 
   buyNewTileAt = (x, y) => {
@@ -80,14 +82,24 @@ class App extends Component {
     });
   }
 
+  clickNextSeason = () => {
+    this.setState({currentSeason: advance(this.state.currentSeason)})
+  }
+
   render() {
     return (
       <div className="App">
-        <div className="left-side-container">
-          <ResourcesView money={this.state.money} seeds={this.state.seedPotatoes} potatoes={this.state.potatoes}/>
-          <ShopView isBuyEnabled={this.isBuyItemsEnabled} itemsBought={this.buyItems}/>
+        <div className="top-container">
+          <div className="left-side-container">
+            <ResourcesView money={this.state.money} seeds={this.state.seedPotatoes} potatoes={this.state.potatoes}/>
+            <ShopView isBuyEnabled={this.isBuyItemsEnabled} itemsBought={this.buyItems}/>
+          </div>
+          <PotatoPatchGrid patch={this.state.patch} patchTileClicked={this.plantPotatoAt} buyableTileClicked={this.buyNewTileAt}/>
         </div>
-        <PotatoPatchGrid patch={this.state.patch} patchTileClicked={this.plantPotatoAt} buyableTileClicked={this.buyNewTileAt}/>
+        <div className="bottom-container">
+          <span>It's {this.state.currentSeason} now, move on to</span>
+          <button onClick={this.clickNextSeason}>the next season</button>
+        </div>
       </div>
     );
   }
