@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
-import { initialPotatoPatch, isTileBuyable, plantPotatoAt, buyTileAt, canPlantAt } from "./PotatoPatch";
+import { initialPotatoPatch, isTileBuyable, plantPotatoAt, buyTileAt, canPlantAt, summerToFall } from "./PotatoPatch";
 import { ResourcesView } from "./ResourcesView";
 import { ShopView } from "./ShopView";
-import { advance, spring, summer, fall, winter } from "./Seasons";
+import * as Seasons from "./Seasons";
+import { MessageBox } from "./MessageBox";
 
 class PatchTile extends Component {
   getTileText()  {
@@ -51,7 +52,8 @@ class App extends Component {
       patch: initialPotatoPatch,
       maxSeedsInTile: 1,
       tilePrice: 5,
-      currentSeason: spring
+      currentSeason: Seasons.spring,
+      messageData: []
     };
   }
 
@@ -83,7 +85,31 @@ class App extends Component {
   }
 
   clickNextSeason = () => {
-    this.setState({currentSeason: advance(this.state.currentSeason)})
+    if (this.state.currentSeason === Seasons.spring) {
+      // only place to plant potatoes
+      // unexpected event: weasel attack
+    }
+    else if (this.state.currentSeason === Seasons.summer) {
+      // fertilizer potatoes ?
+      let [updatedPatch, potatoes, seedPotatoes] = summerToFall(this.state.patch);
+      this.setState({
+        //currentSeason: Seasons.advance(this.state.currentSeason),
+        seedPotatoes: this.state.seedPotatoes + seedPotatoes,
+        potatoes: this.state.potatoes + potatoes,
+        patch: updatedPatch,
+        messageData: this.state.messageData.concat({ potatoesHarvested: potatoes })
+      });
+    }
+    else if (this.state.currentSeason === Seasons.fall) {
+      // unexpected events: thieves attack, disease
+      // move harvest to here ?
+    }
+    else if (this.state.currentSeason === Seasons.winter) {
+      // potatoes eaten
+    }
+    this.setState({
+      currentSeason: Seasons.advance(this.state.currentSeason)
+    });
   }
 
   render() {
@@ -97,6 +123,7 @@ class App extends Component {
           <PotatoPatchGrid patch={this.state.patch} patchTileClicked={this.plantPotatoAt} buyableTileClicked={this.buyNewTileAt}/>
         </div>
         <div className="bottom-container">
+          <MessageBox messageData={this.state.messageData}/>
           <span>It's {this.state.currentSeason} now, move on to</span>
           <button onClick={this.clickNextSeason}>the next season</button>
         </div>
