@@ -10,10 +10,12 @@ export class MessageBox extends Component {
   }
 
   generateMessageText = () => {
-    console.log(this.props.messageData);
     return this.props.messageData.reduce((text, message) => {
       if (message.potatoesHarvested !== undefined) {
-        return text + "Harvested " + message.potatoesHarvested + " potatoes.\n";
+        return text + "Harvested " + message.potatoesHarvested + " potatoes and got " + message.seedsHarvested + " seeds.\n";
+      }
+      else if (message.potatoesEaten !== undefined) {
+        return text + "You ate " + message.potatoesEaten + " potatoes over the last season.\n";
       }
       return text;
     }, "");
@@ -23,7 +25,6 @@ export class MessageBox extends Component {
     return (
       <div>
         <textarea readOnly className="message-box" value={this.generateMessageText()}>
-          
         </textarea>
       </div>
     );

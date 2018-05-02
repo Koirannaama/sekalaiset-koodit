@@ -1,5 +1,3 @@
-import * as Seasons from "./Seasons";
-
 const buyableTileSymbol = "-";
 export const initialPotatoPatch = [
   [0, 0, buyableTileSymbol],
@@ -43,10 +41,9 @@ export function plantPotatoAt(grid, x, y) {
   });
 }
 
-export function summerToFall(grid) {
+export function harvestPotatoes(grid) {
   const potatoGrowthRate = 0.5;
   const seedPotatoGrowthRate = 0.3;
-  const potatoDeathRate = 0.2;
 
   return grid.reduce(([newGrid, potatoes, seedPotatoes], row, i) => {
     let [updatedRow, potatoesInRow, seedPotatoesInRow] = row.reduce(([newRow, rowPot, rowSeed], tile, j) => {

@@ -1,46 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
-import { initialPotatoPatch, isTileBuyable, plantPotatoAt, buyTileAt, canPlantAt, summerToFall } from "./PotatoPatch";
+import { initialPotatoPatch, isTileBuyable, plantPotatoAt, buyTileAt, canPlantAt, harvestPotatoes } from "./PotatoPatch";
 import { ResourcesView } from "./ResourcesView";
 import { ShopView } from "./ShopView";
 import * as Seasons from "./Seasons";
 import { MessageBox } from "./MessageBox";
-
-class PatchTile extends Component {
-  getTileText()  {
-    return this.props.seedPotatoes > 0 ? this.props.seedPotatoes + " potato planted!": "Plant!";
-  }
-
-  render() {
-    return <div className="patch-tile" onClick={this.props.tileClicked}>{this.getTileText()}</div>
-  }
-}
-
-class BuyablePatchTile extends Component {
-  render() {
-    return <div className="patch-tile buyable-tile" onClick={this.props.tileClicked}>Buy!</div>
-  }
-}
-
-class PotatoPatchGrid extends Component {
-  render() {
-    let patchTiles = this.props.patch.map((row, i) => {
-      let rowTiles = row.map((tileData, j) => {
-        return isTileBuyable(tileData)
-                ? <BuyablePatchTile tileClicked={() => this.props.buyableTileClicked(i, j)}/>
-                : <PatchTile seedPotatoes={tileData} tileClicked={() =>this.props.patchTileClicked(i,j)}/>;
-      });
-      return <div className="patch-row">{rowTiles}</div>
-    });
-
-    return (
-      <div className="patch-grid-container darker-border-box ">
-        {patchTiles}
-      </div>
-    );
-
-  }
-}
+import { PotatoPatchGrid } from "./PatchElements"; 
 
 class App extends Component {
   constructor(props) {
@@ -84,6 +49,13 @@ class App extends Component {
     });
   }
 
+  calculatePotatoesEatenOverWinter = () => {
+    let minPotatoesEaten = 2;
+    let maxAdditionalPotatoes = 2;
+    // eat seeds if need to
+    return minPotatoesEaten + Math.floor(Math.random() * maxAdditionalPotatoes);
+  }
+
   clickNextSeason = () => {
     if (this.state.currentSeason === Seasons.spring) {
       // only place to plant potatoes
@@ -91,13 +63,13 @@ class App extends Component {
     }
     else if (this.state.currentSeason === Seasons.summer) {
       // fertilizer potatoes ?
-      let [updatedPatch, potatoes, seedPotatoes] = summerToFall(this.state.patch);
+      let [updatedPatch, potatoes, seedPotatoes] = harvestPotatoes(this.state.patch);
       this.setState({
         //currentSeason: Seasons.advance(this.state.currentSeason),
         seedPotatoes: this.state.seedPotatoes + seedPotatoes,
         potatoes: this.state.potatoes + potatoes,
         patch: updatedPatch,
-        messageData: this.state.messageData.concat({ potatoesHarvested: potatoes })
+        messageData: this.state.messageData.concat({ potatoesHarvested: potatoes, seedsHarvested: seedPotatoes })
       });
     }
     else if (this.state.currentSeason === Seasons.fall) {
@@ -106,13 +78,18 @@ class App extends Component {
     }
     else if (this.state.currentSeason === Seasons.winter) {
       // potatoes eaten
+      let potatoesEaten = this.calculatePotatoesEatenOverWinter();
+      this.setState({
+        potatoes: this.state.potatoes - potatoesEaten,
+        messageData: this.state.messageData.concat({ potatoesEaten: potatoesEaten })
+      });
     }
     this.setState({
       currentSeason: Seasons.advance(this.state.currentSeason)
     });
   }
 
-  render() {
+  gameElements = () => {
     return (
       <div className="App">
         <div className="top-container">
@@ -120,7 +97,7 @@ class App extends Component {
             <ResourcesView money={this.state.money} seeds={this.state.seedPotatoes} potatoes={this.state.potatoes}/>
             <ShopView isBuyEnabled={this.isBuyItemsEnabled} itemsBought={this.buyItems}/>
           </div>
-          <PotatoPatchGrid patch={this.state.patch} patchTileClicked={this.plantPotatoAt} buyableTileClicked={this.buyNewTileAt}/>
+          <PotatoPatchGrid patch={this.state.patch} checkBuyability={isTileBuyable} patchTileClicked={this.plantPotatoAt} buyableTileClicked={this.buyNewTileAt}/>
         </div>
         <div className="bottom-container">
           <MessageBox messageData={this.state.messageData}/>
@@ -129,6 +106,19 @@ class App extends Component {
         </div>
       </div>
     );
+  }
+
+  death = () => {
+    return <div>You died.</div>;
+  }
+
+  render() {
+    if (this.state.potatoes >= 0) {
+      return this.gameElements();
+    }
+    else {
+      return this.death();
+    }
   }
 }
 

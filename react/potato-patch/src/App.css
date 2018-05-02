@@ -30,20 +30,3 @@
 .left-side-container {
   margin: 0.5em 0;
 }
-
-.patch-row {
-  display: inline-block;
-  vertical-align: top;
-}
-
-.patch-tile {
-  font-size: 12px;
-  height: 60px;
-  width: 60px;
-  border: 3px solid rgb(200, 200, 180);
-  margin: 10px
-}
-
-.buyable-tile {
-  border: 2px dashed rgb(170, 150, 170);
-}
