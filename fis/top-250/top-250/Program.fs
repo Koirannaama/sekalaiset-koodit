@@ -14,5 +14,5 @@ type App = XAML<"App.xaml">
 [<EntryPoint>]
 let main argv = 
     let app = App()
-    let w = getMainWindow()
+    let w = MainWindow()
     app.Run(w)
