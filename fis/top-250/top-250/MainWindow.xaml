@@ -6,10 +6,19 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <TextBox Name="searchField" Grid.Row="0" Margin="0, 4" TextChanged="filterMovies"></TextBox>
-        <ListBox Name="movieList" Grid.Row="1" HorizontalContentAlignment="Stretch" SelectionChanged="selChange" ItemsSource="{Binding movies}">
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"></ColumnDefinition>
+                <ColumnDefinition Width="80"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Name="showWatched" Grid.Column="0" Height="20" FontSize="12" Click="showOnlyWatched">Watched</Button>
+            <Button Name="showNotWatched" Grid.Column="1" Height="20" FontSize="12" Click="showOnlyNotWatched">Not watched</Button>
+        </Grid>
+        <ListBox Name="movieList" Grid.Row="2" HorizontalContentAlignment="Stretch" SelectionChanged="selChange" ItemsSource="{Binding movies}">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Style.Triggers>
