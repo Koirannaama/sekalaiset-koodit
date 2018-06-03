@@ -33,3 +33,6 @@ let switchWatchedVisible model =
 
 let switchNotWatchedVisible model =
     changeMovieVisibility model (fun movie -> not movie.watched)
+
+let switchAllVisible model = 
+    changeMovieVisibility model (fun _ -> true)

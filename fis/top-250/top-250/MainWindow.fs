@@ -30,6 +30,6 @@ type MainWindow() as self =
             self.DataContext <- setSelectedMovie None (self.DataContext :?> Model)
 
     override self.filterMovies (s,e) = self.DataContext <- (switchVisibility (self.DataContext :?> Model) (s :?> Controls.TextBox).Text)
-
     override self.showOnlyWatched (_,_) = self.DataContext <- switchWatchedVisible (self.DataContext :?> Model)
     override self.showOnlyNotWatched (_,_) = self.DataContext <- switchNotWatchedVisible (self.DataContext :?> Model)
+    override self.showAll (_,_) = self.DataContext <- switchAllVisible (self.DataContext :?> Model)

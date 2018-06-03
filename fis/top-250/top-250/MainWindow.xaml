@@ -1,26 +1,77 @@
 ﻿<Window
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		Title="Up/Down" Height="500" Width="300" WindowStartupLocation="CenterScreen"
+		Title="TOP 250" Height="500" Width="600" WindowStartupLocation="CenterScreen"
         >
+    <Window.Resources>
+        <Style x:Key="filterButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="FontSize" Value="12"></Setter>
+            <Setter Property="Height" Value="20"></Setter>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Foreground" Value="#8C8C8C"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="Transparent" >
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="ContentTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <TextBlock TextDecorations="Underline" Text="{TemplateBinding Content}"/>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"></RowDefinition>
-            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBox Name="searchField" Grid.Row="0" Margin="0, 4" TextChanged="filterMovies"></TextBox>
+        <TextBox Name="searchField" VerticalContentAlignment="Center" Grid.Row="0" Margin="0, 4" Padding="10" FontSize="14" TextChanged="filterMovies"></TextBox>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="80"></ColumnDefinition>
-                <ColumnDefinition Width="80"></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Name="showWatched" Grid.Column="0" Height="20" FontSize="12" Click="showOnlyWatched">Watched</Button>
-            <Button Name="showNotWatched" Grid.Column="1" Height="20" FontSize="12" Click="showOnlyNotWatched">Not watched</Button>
+            <Button Name="showWatched" Grid.Column="0" Click="showOnlyWatched" Style="{StaticResource filterButton}">WATCHED</Button>
+            <Button Name="showNotWatched" Grid.Column="1" Click="showOnlyNotWatched" Style="{StaticResource filterButton}">NOT WATCHED</Button>
+            <Button Name="showAll" Grid.Column="2" Click="showAll" Style="{StaticResource filterButton}">ALL</Button>
         </Grid>
-        <ListBox Name="movieList" Grid.Row="2" HorizontalContentAlignment="Stretch" SelectionChanged="selChange" ItemsSource="{Binding movies}">
+        <ListBox Name="movieList" Grid.Row="2" HorizontalContentAlignment="Left"  SelectionChanged="selChange" ItemsSource="{Binding movies}" AlternationCount="2">
             <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}">
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border Name="ItemBorder" Background="#F9FBF9">
+                                    <ContentPresenter />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                        <Setter TargetName="ItemBorder" Property="Background" Value="#F9FBF9"></Setter>
+                                    </Trigger>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                        <Setter TargetName="ItemBorder" Property="Background" Value="#C1FFB1"></Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Height" Value="50"></Setter>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding visible}" Value="False">
                             <Setter Property="Visibility" Value="Collapsed"/>
@@ -33,18 +84,16 @@
             </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="0,2">
+                    <Grid Margin="0,2" VerticalAlignment="Center">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="50"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding name}" Grid.Column="0"/>
+                        <TextBlock Text="{Binding name}" Grid.Column="0" Margin="20,0,0,0" FontSize="16"/>
                         <CheckBox Grid.Column="1" Click="checkBoxChange" IsChecked="{Binding watched, Mode=OneWay}"></CheckBox>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-
     </Grid>
-    
 </Window>
