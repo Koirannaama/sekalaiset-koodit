@@ -1,18 +1,35 @@
 module View exposing (..)
 
-import Html exposing (Html)
+import Html exposing (Html, div, map)
+import Html.Attributes exposing (class)
 import GalleryView exposing (view)
 import PhotoView exposing (view)
-import Model exposing (Model, Route(..))
-import Msg exposing (Msg)
+import LoginView exposing (loginDialog)
+import Model exposing (Model, Route(..), isLoginVisible)
+import Msg exposing (Msg(LoginMsg))
 import Components exposing (topBar)
+import LoginModel exposing (Model)
 
-getView : Model -> Html Msg
+--TODO: consider Html.map for handling Msg types from sub-views
+
+getView : Model.Model -> Html Msg
 getView model =
   let
-    topBarComponent = topBar model.navMenuOpen
+    base = viewBase model.navMenuOpen (isLoginVisible model) model.loginModel
   in
     case model.route of
-      PhotoRoute -> PhotoView.view topBarComponent model.photoModel
-      GalleryRoute -> GalleryView.view topBarComponent
-      NotFoundRoute -> GalleryView.view topBarComponent
+      PhotoRoute -> PhotoView.view base model.photoModel
+      GalleryRoute -> GalleryView.view base
+      NotFoundRoute -> GalleryView.view base
+
+viewBase : Bool -> Bool -> LoginModel.Model -> List (Html Msg.Msg) -> List (Html Msg.Msg) -> String -> Html Msg.Msg
+viewBase isNavMenuOpen isLoginOpen loginModel topBarControls content topLevelClassName =
+  let
+    login = Html.map LoginMsg (loginDialog loginModel isLoginOpen)
+    baseElements = 
+      [ login --loginDialog isLoginOpen
+      , topBar isNavMenuOpen topBarControls
+      ]
+  in
+    div [ class topLevelClassName ]
+       (List.append baseElements content)

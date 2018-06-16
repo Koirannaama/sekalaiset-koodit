@@ -13,8 +13,8 @@ import Direction exposing (Direction(..))
 import Components exposing (iconButton)
 
 -- TODO: refactor to make this look nicer
-view : (List (Html Msg.Msg) -> Html Msg.Msg) -> Model -> Html Msg.Msg
-view topBar model =
+view : (List (Html Msg.Msg) -> List (Html Msg.Msg) -> String -> Html Msg.Msg) -> Model -> Html Msg.Msg
+view viewBase model =
   let
     photos = Photos.getPhotos model.photos
     topBarControls = 
@@ -22,16 +22,15 @@ view topBar model =
       , searchElement model.suggestions model.input
       , photoButtons model.input
       ]
-    topBarElem = topBar topBarControls
     slidingControls = secondaryPhotoControls model.showSecondaryControls photos.currentPhotoNumber photos.numberOfPhotos model.input
     elements = 
       case photos.photoUrl of 
         Just url -> 
-          [slidingControls, topBarElem, (photoElement photos.photoUrl)]
+          [slidingControls, (photoElement photos.photoUrl)]
         Nothing -> 
-          [topBarElem, (photoElement photos.photoUrl)]
+          [(photoElement photos.photoUrl)]
   in 
-    div [ class "top-container" ] elements
+    viewBase topBarControls elements "top-container"
 
 searchButton : String -> Html Msg.Msg
 searchButton input =

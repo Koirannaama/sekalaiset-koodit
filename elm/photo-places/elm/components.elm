@@ -3,8 +3,9 @@ module Components exposing (iconButton, topBar)
 import Html exposing (Html, Attribute, div, button, span, form, text, a)
 import Html.Attributes exposing (class, action, classList, href)
 import Html.Events exposing (onClick)
-import Routing exposing( galleryPath, photoPath)
-import Msg exposing (Msg(ToggleNavMenu))
+import Routing exposing (galleryPath, photoPath)
+import Msg exposing (Msg(ToggleNavMenu, LoginMsg))
+import LoginModel exposing (Msg(CloseLogin))
 
 iconButton : List (Attribute msg) -> Attribute msg -> Html msg
 iconButton attributes iconClass =
@@ -12,7 +13,7 @@ iconButton attributes iconClass =
     span [ iconClass ] []
   ]
 
-topBar : Bool -> List (Html Msg) -> Html Msg
+topBar : Bool -> List (Html Msg.Msg) -> Html Msg.Msg
 topBar isNavMenuVisible controls =
   div [ class "top-bar no-side-pad row col-md-12" ] 
     [ div [ class "col-md-9 col-xs-10 full-height"] controls
@@ -20,7 +21,7 @@ topBar isNavMenuVisible controls =
     , navMenu isNavMenuVisible
     ] 
 
-navButtons : Html Msg
+navButtons : Html Msg.Msg
 navButtons =
   div [ class "col-md-3 col-xs-2 text-right nav-button-container" ] 
     [ searchLink [class "nav-link hidden-xs"]
@@ -40,13 +41,13 @@ searchLink : List (Attribute msg) -> Html msg
 searchLink = 
   navLink photoPath "Search"
 
-burgerButton : Html Msg
+burgerButton : Html Msg.Msg
 burgerButton = 
   iconButton 
     [ class "button float-right visible-xs", onClick ToggleNavMenu] 
     (class "glyphicon glyphicon-menu-hamburger")
 
-navMenu : Bool -> Html Msg
+navMenu : Bool -> Html Msg.Msg
 navMenu isVisible =
   let
     classes = classList [("nav-menu", True), ("hidden", not isVisible)]

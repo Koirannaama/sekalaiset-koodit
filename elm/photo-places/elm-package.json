@@ -6,7 +6,8 @@
     "source-directories": [
         "./elm",
         "./elm/photo-search",
-        "./elm/gallery"
+        "./elm/gallery",
+        "./elm/login"
     ],
     "exposed-modules": [],
     "dependencies": {

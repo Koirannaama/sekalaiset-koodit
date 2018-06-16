@@ -11,13 +11,15 @@ import Routing exposing (parseLocation)
 import Ports exposing (..)
 import PhotoModel exposing (update, Msg(PhotoUrls, PlaceSuggestions, KeyPressed))
 import GalleryModel exposing (update)
+import LoginModel exposing (update)
+import API
 
 init : Location -> (Model, Cmd Msg.Msg)
 init loc = 
   let
     currentRoute = Routing.parseLocation loc
   in
-    (Model.initModel currentRoute, Cmd.none)
+    (Model.initModel currentRoute, API.isAuthenticated)
 
 main : Program Never Model Msg.Msg
 main =
@@ -41,6 +43,11 @@ update msg model =
         (newGalleryModel, cmd) = GalleryModel.update galleryMsg model.galleryModel
       in
         ({ model | galleryModel = newGalleryModel}, (Cmd.map GalleryMsg cmd))
+    LoginMsg loginMsg ->
+      let
+        (newLoginModel, cmd) = LoginModel.update loginMsg model.loginModel
+      in
+        ({ model | loginModel = newLoginModel }, (Cmd.map LoginMsg cmd))
     ChangeView location ->
       let
         newRoute = parseLocation location
@@ -48,6 +55,9 @@ update msg model =
         ({ model | route = newRoute }, Cmd.none)
     ToggleNavMenu ->
       ({ model | navMenuOpen = not model.navMenuOpen }, Cmd.none)
+    
+    IsAuthenticated (Ok _) -> (model, Cmd.none)
+    IsAuthenticated (Err _) -> (model, Cmd.none)
 
 subscriptions : Model -> Sub Msg.Msg
 subscriptions model =
