@@ -1,5 +1,4 @@
-import Html exposing (div, input, text)
-import Html.App exposing (beginnerProgram)
+import Html exposing (div, input, text, beginnerProgram)
 import Html.Events exposing (onInput)
 import Result exposing (withDefault)
 import String exposing (toInt, fromList, toList)
