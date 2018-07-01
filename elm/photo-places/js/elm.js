@@ -1,14 +1,22 @@
-var node = document.getElementById('main');
-var app = Elm.Main.embed(node);
+require('../main.html');
+require('../css/styles.css');
+var autoComplete = require("./autocomplete.js");
+var photos = require("./photos.js");
+
+var Elm = require('../elm/photo-places.elm');
+var mountNode = document.getElementById('main');
+
+var app = Elm.Main.embed(mountNode);
+
 app.ports.getPhotosBySuggestion.subscribe(function (placeID) {
-  getPhotosByID(placeID, app.ports.photoUrls);
+  photos.getPhotosByID(placeID, app.ports.photoUrls);
 });
 
 app.ports.getPhotosByFreeText.subscribe(function (text) {
   console.log(text);
-  getPhotosByText(text, app.ports.photoUrls)
+  photos.getPhotosByText(text, app.ports.photoUrls)
 });
 
 app.ports.placeInput.subscribe(function(input) {
-  getSuggestions(input, app.ports.placeSuggestions);
+  autoComplete.getSuggestions(input, app.ports.placeSuggestions);
 });

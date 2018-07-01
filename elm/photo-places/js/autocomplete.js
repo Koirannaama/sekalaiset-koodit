@@ -1,4 +1,4 @@
-function getSuggestions(input, suggestionPort) {
+export function getSuggestions(input, suggestionPort) {
   if ( input !== "") {
     var service = new google.maps.places.AutocompleteService();
     service.getPlacePredictions({ "input": input },

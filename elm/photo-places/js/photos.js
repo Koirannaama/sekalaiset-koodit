@@ -1,4 +1,4 @@
-function getPhotosByID(placeID, urlPort) {
+export function getPhotosByID(placeID, urlPort) {
   var request = {
     placeId: placeID
   };
@@ -11,7 +11,7 @@ function getPhotosByID(placeID, urlPort) {
   }
 }
 
-function getPhotosByText(text, urlPort) {
+export function getPhotosByText(text, urlPort) {
   var req = {
     query: text
   };
