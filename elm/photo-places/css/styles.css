@@ -238,6 +238,7 @@ li:hover {
   right: 0;  
   background: white;
   z-index: 101;
+  border-radius: 8px;
 }
 
 .modal-dialog-backdrop {
@@ -249,4 +250,41 @@ li:hover {
   background: black;  
   opacity: 0.3;  
   z-index: 100;
+}
+
+.login-header {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-color: rgb(66, 194, 244);
+  height: 32px;
+  text-align: center;
+}
+
+.login-header span {
+  line-height: 32px;  
+  font-size: 18px;  
+  font-weight: bold;
+  color: white;
+}
+
+.login-form {
+  width: 80%;
+  margin: auto;
+}
+
+.login-field {
+  margin-top: 12px;
+}
+
+.login-form label {
+  display: block;
+  color: rgb(130, 134, 139);
+  font-weight: normal;
+}
+
+.login-form input {
+  border-style: solid;
+  border-color: rgb(197, 200, 204);;
+  border-width: 1px;
+  width: 100%;
 }
