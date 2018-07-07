@@ -4,7 +4,7 @@ import Platform.Cmd exposing (Cmd, none, map)
 import Platform.Sub exposing (Sub, none)
 import Navigation exposing (Location)
 import Keyboard exposing (KeyCode, presses)
-import Model exposing (Model)
+import Model exposing (Model, isLoginVisible)
 import Msg exposing (Msg(..))
 import View exposing (getView)
 import Routing exposing (parseLocation)
@@ -12,6 +12,7 @@ import Ports exposing (..)
 import PhotoModel exposing (update, Msg(PhotoUrls, PlaceSuggestions, KeyPressed))
 import GalleryModel exposing (update)
 import LoginModel exposing (update)
+import LoginMsg exposing (Msg(FormKeyPress))
 import API
 
 init : Location -> (Model, Cmd Msg.Msg)
@@ -19,7 +20,7 @@ init loc =
   let
     currentRoute = Routing.parseLocation loc
   in
-    (Model.initModel currentRoute, API.isAuthenticated)
+    (Model.initModel currentRoute, (API.isAuthenticated Msg.IsAuthenticated))
 
 main : Program Never Model Msg.Msg
 main =
@@ -45,7 +46,7 @@ update msg model =
         ({ model | galleryModel = newGalleryModel}, (Cmd.map GalleryMsg cmd))
     LoginMsg loginMsg ->
       let
-        (newLoginModel, cmd) = LoginModel.update loginMsg model.loginModel
+        (newLoginModel, cmd) = LoginModel.update loginMsg model.loginModel model.csrfToken
       in
         ({ model | loginModel = newLoginModel }, (Cmd.map LoginMsg cmd))
     ChangeView location ->
@@ -55,14 +56,24 @@ update msg model =
         ({ model | route = newRoute }, Cmd.none)
     ToggleNavMenu ->
       ({ model | navMenuOpen = not model.navMenuOpen }, Cmd.none)
-    
-    IsAuthenticated (Ok _) -> (model, Cmd.none)
+    Msg.KeyPressed keyCode ->
+      let
+        newMsg =
+          if isLoginVisible model then
+            FormKeyPress keyCode |> LoginMsg
+          else
+            PhotoModel.KeyPressed keyCode |> PhotoMsg
+      in
+        update newMsg model    
+    IsAuthenticated (Ok (isAuth, token)) -> 
+      ({ model | csrfToken = token }, Cmd.none)
     IsAuthenticated (Err _) -> (model, Cmd.none)
+    LoginSuccess -> (model, Cmd.none)
 
 subscriptions : Model -> Sub Msg.Msg
 subscriptions model =
   Sub.batch 
     [ photoUrls (PhotoUrls >> PhotoMsg)
     , placeSuggestions (PlaceSuggestions >> PhotoMsg)
-    , Keyboard.presses (KeyPressed >> PhotoMsg)
+    , Keyboard.presses (Msg.KeyPressed)
     ]

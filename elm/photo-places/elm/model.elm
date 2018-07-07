@@ -10,7 +10,7 @@ type alias Model =
   , loginModel: LoginModel.Model
   , route: Route
   , navMenuOpen: Bool
-  --, loginVisible: Bool
+  , csrfToken: String
   }
 
 type Route =
@@ -25,7 +25,7 @@ initModel route =
    , loginModel = LoginModel.initModel
    , route = route
    , navMenuOpen = False
-   --, loginVisible = True
+   , csrfToken = ""
    }
 
 isLoginVisible : Model -> Bool

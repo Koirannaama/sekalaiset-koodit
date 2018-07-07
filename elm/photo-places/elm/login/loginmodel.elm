@@ -1,16 +1,19 @@
-module LoginModel exposing (Msg(..), Model, update, initModel, isLoginVisible)
+--import Cmd exposing (map)
 
-type Msg =
-  UsernameInput String
-  | PasswordInput String
-  | OpenLogin
-  | CloseLogin
-  | SubmitLogin
+module LoginModel exposing (Model, update, initModel, isLoginVisible)
+
+import LoginMsg exposing (Msg(..))
+import API
 
 type alias Model = 
   { username: String
   , password: String
   , isVisible: Bool
+  }
+
+type alias LoginTranslation msg =
+  { loginMsg: Msg -> msg
+  , loginResultMsg: msg  
   }
 
 initModel : Model
@@ -20,8 +23,8 @@ initModel =
   , isVisible = True
   }
 
-update : Msg -> Model -> (Model, Cmd Msg)
-update msg model =
+update : Msg -> Model -> String -> (Model, Cmd Msg)
+update msg model token =
   case msg of
     UsernameInput input ->
       ({ model | username = input }, Cmd.none)
@@ -36,7 +39,29 @@ update msg model =
       ({ model | isVisible = False }, Cmd.none)
 
     SubmitLogin ->
-      (model, Cmd.none)
+      let
+        creds = { username = model.username, password = model.password }
+        authCmd = API.authenticate creds token LoginResponse
+      in
+        (model, authCmd)
+
+    FormKeyPress keyCode ->
+      case keyCode of
+        13 -> (model, Cmd.none)
+        _ -> (model, Cmd.none)
+
+    LoginResponse (Ok _) -> (model, Cmd.none)
+    LoginResponse (Err _) -> (model, Cmd.none)
+          
 
 isLoginVisible : Model -> Bool
 isLoginVisible model = model.isVisible
+
+translateMsg : LoginTranslation msg -> Msg -> msg
+translateMsg { loginMsg, loginResultMsg } msg =
+  case msg of
+    LoginResponse (Ok _) ->
+      loginResultMsg
+    _ ->
+      loginMsg msg
+    

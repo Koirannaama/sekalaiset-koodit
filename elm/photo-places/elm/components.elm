@@ -5,7 +5,7 @@ import Html.Attributes exposing (class, action, classList, href)
 import Html.Events exposing (onClick)
 import Routing exposing (galleryPath, photoPath)
 import Msg exposing (Msg(ToggleNavMenu, LoginMsg))
-import LoginModel exposing (Msg(CloseLogin))
+--import LoginModel exposing (Msg(CloseLogin))
 
 iconButton : List (Attribute msg) -> Attribute msg -> Html msg
 iconButton attributes iconClass =
