@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+  <body styles="position: relative;">
+    <div class="header">
+      <button class="menu-btn" onclick="toggleMenu()">Menu</button>
+    </div>
+    <div class="content">
+      
+    </div>
+    <div id="menu" class="slide-menu">
+      <div class="submenu" onclick="showSubMenu()">
+        <div id="submenu-stuff" class="submenu-content">
+
+        </div>
+      </div>
+
+    </div>
+    <script>
+      const slideIn = "slide-in";
+      const slideOut = "slide-out";
+      const subMenuSlideIn = "submenu-slide-in";
+      const menu = document.getElementById("menu");
+      const subMenu = document.getElementById("submenu-stuff");
+      let menuVisible = false;
+
+      function toggleMenu() {
+        console.log("menu");
+        if (menuVisible) {
+          menu.classList.add(slideOut);
+          menu.classList.remove(slideIn);
+        }
+        else {
+          menu.classList.add(slideIn);
+          menu.classList.remove(slideOut);
+        }
+        menuVisible = !menuVisible
+      }
+
+      function showSubMenu() {
+        console.log("submenu");
+        subMenu.classList.add(subMenuSlideIn);
+      }
+     
+    </script>
+  </body>
+</html>
