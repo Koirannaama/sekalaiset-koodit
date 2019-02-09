@@ -24,7 +24,7 @@ isAuthenticated msg =
         , withCredentials = True -- is needed to set cookie with set-cookie-header
         }  
 
-authenticate : Credentials -> String -> (Result Error Bool -> msg) -> Cmd msg
+authenticate : Credentials -> String -> (Result Error (Bool, String) -> msg) -> Cmd msg
 authenticate creds token msg =
   let
     encodedCreds = Http.jsonBody <| encodeCredentials creds
@@ -38,14 +38,26 @@ encodeCredentials creds =
   , ("password", Enc.string creds.password)
   ]
 
-loginRequest : String -> Http.Body -> Http.Request Bool
+loginRequest : String -> Http.Body -> Http.Request (Bool, String)
 loginRequest token body =
   Http.request  { method = "POST"
-                , headers = 
-                  [ Http.header "X-CSRFToken" token ]
+                , headers = [ Http.header "X-CSRFToken" token ]
                 , url = "http://localhost:8000/login"
                 , body = body
-                , expect = Http.expectJson (field "isAuth" bool)
+                , expect = Http.expectJson <| Dec.map2 (,) (field "isAuth" bool) (field "token" Dec.string)
                 , timeout = Just (500*millisecond)
                 , withCredentials = True
                 }
+
+logout : String -> (Result Error String -> msg) -> Cmd msg
+logout token msg =
+  Http.send msg <|
+    Http.request
+        { method = "POST"
+        , headers = [ Http.header "X-CSRFToken" token ]
+        , url = "http://localhost:8000/logout" 
+        , body = Http.emptyBody
+        , expect = Http.expectString
+        , timeout = Nothing
+        , withCredentials = True
+        } 

@@ -11,6 +11,7 @@ type alias Model =
   , route: Route
   , navMenuOpen: Bool
   , csrfToken: String
+  , isLoggedIn: Bool
   }
 
 type Route =
@@ -26,6 +27,7 @@ initModel route =
    , route = route
    , navMenuOpen = False
    , csrfToken = ""
+   , isLoggedIn = False
    }
 
 isLoginVisible : Model -> Bool

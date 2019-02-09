@@ -15,20 +15,20 @@ import LoginModel exposing (Model)
 getView : Model.Model -> Html Msg
 getView model =
   let
-    base = viewBase model.navMenuOpen (isLoginVisible model) model.loginModel
+    base = viewBase model.navMenuOpen (isLoginVisible model) model.isLoggedIn model.loginModel
   in
     case model.route of
       PhotoRoute -> PhotoView.view base model.photoModel
       GalleryRoute -> GalleryView.view base
       NotFoundRoute -> GalleryView.view base
 
-viewBase : Bool -> Bool -> LoginModel.Model -> List (Html Msg.Msg) -> List (Html Msg.Msg) -> String -> Html Msg.Msg
-viewBase isNavMenuOpen isLoginOpen loginModel topBarControls content topLevelClassName =
+viewBase : Bool -> Bool -> Bool -> LoginModel.Model -> List (Html Msg.Msg) -> List (Html Msg.Msg) -> String -> Html Msg.Msg
+viewBase isNavMenuOpen isLoginOpen isLoggedIn loginModel topBarControls content topLevelClassName =
   let
     login = Html.map LoginMsg (loginDialog loginModel isLoginOpen)
     baseElements = 
       [ login --loginDialog isLoginOpen
-      , topBar isNavMenuOpen topBarControls
+      , topBar isNavMenuOpen isLoggedIn topBarControls
       ]
   in
     div [ class topLevelClassName ]

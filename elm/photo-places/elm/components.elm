@@ -4,8 +4,8 @@ import Html exposing (Html, Attribute, div, button, span, form, text, a)
 import Html.Attributes exposing (class, action, classList, href)
 import Html.Events exposing (onClick)
 import Routing exposing (galleryPath, photoPath)
-import Msg exposing (Msg(ToggleNavMenu, LoginMsg))
---import LoginModel exposing (Msg(CloseLogin))
+import Msg exposing (Msg(ToggleNavMenu, LoginMsg, Logout))
+import LoginMsg exposing (Msg(OpenLogin))
 
 iconButton : List (Attribute msg) -> Attribute msg -> Html msg
 iconButton attributes iconClass =
@@ -13,18 +13,19 @@ iconButton attributes iconClass =
     span [ iconClass ] []
   ]
 
-topBar : Bool -> List (Html Msg.Msg) -> Html Msg.Msg
-topBar isNavMenuVisible controls =
+topBar : Bool -> Bool -> List (Html Msg.Msg) -> Html Msg.Msg
+topBar isNavMenuVisible isLoggedIn controls =
   div [ class "top-bar no-side-pad row col-md-12" ] 
     [ div [ class "col-md-9 col-xs-10 full-height"] controls
-    , navButtons
+    , navButtons isLoggedIn
     , navMenu isNavMenuVisible
     ] 
 
-navButtons : Html Msg.Msg
-navButtons =
+navButtons : Bool -> Html Msg.Msg
+navButtons isLoggedIn =
   div [ class "col-md-3 col-xs-2 text-right nav-button-container" ] 
-    [ searchLink [class "nav-link hidden-xs"]
+    [ loginButton isLoggedIn [ class "nav-link hidden-xs"]
+    , searchLink [class "nav-link hidden-xs"]
     , galleryLink [class "nav-link hidden-xs"]
     , burgerButton
     ]
@@ -56,3 +57,10 @@ navMenu isVisible =
       [ searchLink [class "nav-link nav-menu-item"]
       , galleryLink [class "nav-link nav-menu-item"]
       ]
+
+loginButton : Bool ->List (Attribute Msg.Msg) -> Html Msg.Msg
+loginButton isLoggedIn attributes =
+  let
+    (buttonText, cmd) = if isLoggedIn then ("Logout", Logout) else ("Login", LoginMsg OpenLogin)
+  in  
+    a ((onClick cmd) :: attributes) [ text buttonText ]

@@ -9,4 +9,4 @@ type Msg =
   | CloseLogin
   | SubmitLogin
   | FormKeyPress Int
-  | LoginResponse (Result Http.Error Bool)
+  | LoginResponse (Result Http.Error (Bool, String))

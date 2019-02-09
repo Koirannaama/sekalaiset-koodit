@@ -20,7 +20,7 @@ initModel : Model
 initModel = 
   { username = ""
   , password = ""
-  , isVisible = True
+  , isVisible = False
   }
 
 update : Msg -> Model -> String -> (Model, Cmd Msg)
@@ -50,8 +50,12 @@ update msg model token =
         13 -> (model, Cmd.none)
         _ -> (model, Cmd.none)
 
-    LoginResponse (Ok _) -> (model, Cmd.none)
-    LoginResponse (Err _) -> (model, Cmd.none)
+    LoginResponse (Ok _ ) -> Debug.log "Login response ok" (initModel, Cmd.none)
+    LoginResponse (Err error) -> 
+      let
+        e = Debug.log "Login response error" error
+      in
+        (model, Cmd.none)
           
 
 isLoginVisible : Model -> Bool

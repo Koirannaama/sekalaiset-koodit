@@ -16,3 +16,5 @@ type Msg =
   | IsAuthenticated (Result Http.Error (Bool, String))
   | KeyPressed Int
   | LoginSuccess
+  | Logout
+  | LogoutResult (Result Http.Error String)
