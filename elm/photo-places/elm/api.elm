@@ -11,6 +11,8 @@ type alias Credentials =
   , password: String
   }
 
+type LoginError = BadCredentials | ServerError
+
 isAuthenticated : (Result Error (Bool, String) -> msg) ->  Cmd msg
 isAuthenticated msg =
   Http.send msg <|
@@ -60,4 +62,10 @@ logout token msg =
         , expect = Http.expectString
         , timeout = Nothing
         , withCredentials = True
-        } 
+        }
+
+getLoginError : Error -> LoginError
+getLoginError httpError =
+  case httpError of
+    Http.BadStatus r -> BadCredentials
+    _ -> ServerError

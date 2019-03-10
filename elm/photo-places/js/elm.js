@@ -1,5 +1,5 @@
 require('../main.html');
-require('../css/styles.css');
+require('../css/styles.scss');
 var autoComplete = require("./autocomplete.js");
 var photos = require("./photos.js");
 

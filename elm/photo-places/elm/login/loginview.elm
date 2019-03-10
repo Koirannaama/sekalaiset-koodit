@@ -25,17 +25,24 @@ loginHeader =
 loginForm : Model -> Html Msg
 loginForm model =
   div [ class "login-form" ]
-    [ loginField "Username" model.username "username" UsernameInput
-    , loginField "Password" model.password "password" PasswordInput
+    [ loginField "Username" model.username "username" "text" UsernameInput
+    , loginField "Password" model.password "password" "password" PasswordInput
     , button [ class "login-btn", onClick SubmitLogin ] [ text "Log in" ]
+    , span [ class "error-msg" ] [ text model.errorMsg ]
     ]
 
 
-loginField : String -> String -> String -> (String -> Msg) -> Html Msg
-loginField labelText inputValue inputID inputMsg =
+loginField : String -> String -> String -> String -> (String -> Msg) -> Html Msg
+loginField labelText inputValue inputID typeAttr inputMsg =
   div [ class "login-field" ]
     [ label [ for inputID ] [ text labelText ]
-    , input [ class "input-box", onInput inputMsg, value inputValue, id inputID, onKeyDown FormKeyPress ] []
+    , input [ class "input-box"
+            , onInput inputMsg
+            , value inputValue
+            , id inputID
+            , onKeyDown FormKeyPress
+            , type_ typeAttr ]
+            []
     ]
 
 onKeyDown : (Int -> Msg) -> Attribute Msg

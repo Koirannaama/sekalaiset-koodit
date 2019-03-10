@@ -1,3 +1,6 @@
+@import '../elm/login/login';
+@import 'base';
+
 body {
   background-color: rgb(236, 239, 243)
 }
@@ -29,7 +32,7 @@ body {
   height: 40px;
   margin-right: 0;
   margin-left: 0;
-  background-color: rgb(66, 194, 244);
+  background-color: $main-blue;
 }
 
 .top-bar-controls {
@@ -67,8 +70,8 @@ body {
 
 .button {
   height: 100%;
-  background-color: rgb(66, 194, 244);
-  border: 3px solid rgb(66, 194, 244);
+  background-color: $main-blue;
+  border: 3px solid $main-blue;
   color: white;
 }
 
@@ -88,7 +91,7 @@ body {
 
 .btn-secondary:hover {
   border: none;
-  color: rgb(66, 194, 244);
+  color: $main-blue;
 }
 
 /*Override Elm's inline styles*/
@@ -220,7 +223,7 @@ li:hover {
   height: 100px;
   right: 0;
   top: 40px;
-  background: rgb(66, 194, 244);
+  background: $main-blue;
 }
 
 .nav-menu-item {
@@ -229,7 +232,7 @@ li:hover {
 
 .modal-dialog {
   position: fixed;  
-  height: 30%;  
+  /* height: 30%;  */ 
   width: 30%;  
   top: 20%;  
   margin-left: auto;  
@@ -250,41 +253,4 @@ li:hover {
   background: black;  
   opacity: 0.3;  
   z-index: 100;
-}
-
-.login-header {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  background-color: rgb(66, 194, 244);
-  height: 32px;
-  text-align: center;
-}
-
-.login-header span {
-  line-height: 32px;  
-  font-size: 18px;  
-  font-weight: bold;
-  color: white;
-}
-
-.login-form {
-  width: 80%;
-  margin: auto;
-}
-
-.login-field {
-  margin-top: 12px;
-}
-
-.login-form label {
-  display: block;
-  color: rgb(130, 134, 139);
-  font-weight: normal;
-}
-
-.login-form input {
-  border-style: solid;
-  border-color: rgb(197, 200, 204);;
-  border-width: 1px;
-  width: 100%;
 }

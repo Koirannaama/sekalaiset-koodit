@@ -1,0 +1,58 @@
+@import '../../css/base.scss';
+
+.login-header {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-color: $main-blue;
+  height: 32px;
+  text-align: center;
+}
+
+.login-header span {
+  line-height: 32px;  
+  font-size: 18px;  
+  font-weight: bold;
+  color: white;
+}
+
+.login-form {
+  width: 80%;
+  margin: auto;
+  min-height: 210px;
+}
+
+.login-field {
+  margin-top: 12px;
+}
+
+.login-form label {
+  display: block;
+  color: rgb(130, 134, 139);
+  font-weight: normal;
+}
+
+.login-form input {
+  border-style: solid;
+  border-color: rgb(197, 200, 204);
+  border-width: 1px;
+  width: 100%;
+}
+
+.login-btn {
+  width: 100%;
+  border: none;
+  color: white;
+  font-weight: bold;
+  background-color: $main-blue;
+  padding: 3px;
+  margin-top: 18px;
+}
+
+.login-btn:hover {
+  background-color: #23a4d7;
+}
+
+.error-msg {
+  margin: 12px 0;
+  display: inline-block;
+}

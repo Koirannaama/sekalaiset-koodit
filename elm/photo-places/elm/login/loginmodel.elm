@@ -3,12 +3,13 @@
 module LoginModel exposing (Model, update, initModel, isLoginVisible)
 
 import LoginMsg exposing (Msg(..))
-import API
+import API exposing (LoginError(..), authenticate, getLoginError)
 
 type alias Model = 
   { username: String
   , password: String
   , isVisible: Bool
+  , errorMsg: String
   }
 
 type alias LoginTranslation msg =
@@ -21,6 +22,7 @@ initModel =
   { username = ""
   , password = ""
   , isVisible = False
+  , errorMsg = ""
   }
 
 update : Msg -> Model -> String -> (Model, Cmd Msg)
@@ -39,23 +41,19 @@ update msg model token =
       ({ model | isVisible = False }, Cmd.none)
 
     SubmitLogin ->
-      let
-        creds = { username = model.username, password = model.password }
-        authCmd = API.authenticate creds token LoginResponse
-      in
-        (model, authCmd)
+      (model, loginCmd model token)
 
     FormKeyPress keyCode ->
       case keyCode of
-        13 -> (model, Cmd.none)
+        13 -> (model, loginCmd model token)
         _ -> (model, Cmd.none)
 
-    LoginResponse (Ok _ ) -> Debug.log "Login response ok" (initModel, Cmd.none)
+    LoginResponse (Ok _ ) -> (initModel, Cmd.none)
     LoginResponse (Err error) -> 
       let
-        e = Debug.log "Login response error" error
+        loginError = getLoginError error
       in
-        (model, Cmd.none)
+        ({ model | errorMsg = getLoginErrorMessage loginError }, Cmd.none)
           
 
 isLoginVisible : Model -> Bool
@@ -68,4 +66,16 @@ translateMsg { loginMsg, loginResultMsg } msg =
       loginResultMsg
     _ ->
       loginMsg msg
+
+getLoginErrorMessage : LoginError -> String
+getLoginErrorMessage err =
+  case err of
+    BadCredentials -> "Incorrect username or password"
+    ServerError -> "Error when logging in"
     
+loginCmd : Model -> String -> Cmd Msg
+loginCmd model token =
+  let
+    creds = { username = model.username, password = model.password }
+  in
+    authenticate creds token LoginResponse
