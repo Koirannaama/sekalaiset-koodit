@@ -1,10 +1,15 @@
 export function getPhotosByID(placeID, urlPort) {
+  console.log("Get photos by ID");
   var request = {
     placeId: placeID
   };
   runIDSearch(request, handlePlace);
 
   function handlePlace(place, status) {
+    if (!place) {
+      console.log("No place data received");
+      return
+    }
     var photos = place.photos;
     var urls = getUrls(status, photos);
     urlPort.send(urls);
@@ -12,6 +17,7 @@ export function getPhotosByID(placeID, urlPort) {
 }
 
 export function getPhotosByText(text, urlPort) {
+  console.log("Get photos by text");
   var req = {
     query: text
   };

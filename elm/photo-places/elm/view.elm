@@ -27,7 +27,7 @@ viewBase isNavMenuOpen isLoginOpen isLoggedIn loginModel topBarControls content 
   let
     login = Html.map LoginMsg (loginDialog loginModel isLoginOpen)
     baseElements = 
-      [ login --loginDialog isLoginOpen
+      [ login 
       , topBar isNavMenuOpen isLoggedIn topBarControls
       ]
   in

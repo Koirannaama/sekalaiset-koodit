@@ -1,7 +1,7 @@
 module GalleryModel exposing (..)
 
 type Msg =
-  SavePhoto String
+  SavePhoto String -- Not needed
 
 type alias Model =
   { savedPhotos: List String }

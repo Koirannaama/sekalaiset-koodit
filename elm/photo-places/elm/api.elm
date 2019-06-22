@@ -6,6 +6,8 @@ import Json.Decode as Dec exposing (int, bool, field, string)
 import Json.Encode as Enc exposing (Value, object, string)
 import Time exposing (millisecond)
 
+-- Module needs refactoring
+
 type alias Credentials = 
   { username: String
   , password: String
@@ -13,7 +15,7 @@ type alias Credentials =
 
 type LoginError = BadCredentials | ServerError
 
-isAuthenticated : (Result Error (Bool, String) -> msg) ->  Cmd msg
+isAuthenticated : (Result Error (Bool, String) -> msg) -> Cmd msg
 isAuthenticated msg =
   Http.send msg <|
     Http.request
@@ -69,3 +71,20 @@ getLoginError httpError =
   case httpError of
     Http.BadStatus r -> BadCredentials
     _ -> ServerError
+
+-- Get token from response?
+storePhoto : String -> String -> (Result Error String -> msg) -> Cmd msg
+storePhoto token photoURL msg =
+  let
+    body = object [ ("url", Enc.string photoURL) ]
+  in
+    Http.send msg <|
+      Http.request
+        { method = "POST"
+          , headers = [ Http.header "X-CSRFToken" token ]
+          , url = "http://localhost:8000/save_photo" 
+          , body = Http.jsonBody body
+          , expect = Http.expectString
+          , timeout = Nothing
+          , withCredentials = True
+          }
