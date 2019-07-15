@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+}
+
+.controls {
+  height: 5em;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  background-color: rgb(196, 247, 170);
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+}
+
+#book-file-btn {
+  padding: 0.5rem;
+  background-color: rgb(232, 232, 232);
+  height: 1.5rem;
+  border: 1px solid rgb(204, 204, 204);
+}
+
+#book-file-btn:hover {
+  background-color: rgb(209, 209, 209);
+  border: 1px solid rgb(179, 179, 179);
+}
+
+#book-file-input {
+  display: none;
+}
+
+#book-progress {
+  margin-left: auto;
+}
+
+.text {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 40em;
+}
+
+.text p {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  line-height: 1.5em;
+  color: rgb(30, 30, 30);
+}
+
+pre {
+  white-space: pre-wrap;
+}
