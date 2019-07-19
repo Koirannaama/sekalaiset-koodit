@@ -56,3 +56,7 @@ def savePhoto(request):
   photo.save()
 
   return HttpResponse("OK", status=200)
+
+@ensure_csrf_cookie
+def registerUser(request):
+  return HttpResponse("OK", status=200)

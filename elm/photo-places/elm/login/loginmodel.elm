@@ -1,15 +1,21 @@
---import Cmd exposing (map)
-
-module LoginModel exposing (Model, update, initModel, isLoginVisible)
+module LoginModel exposing (Model, LoginMode(..), FormValidationError(..), LoginError(..), update, initModel, isLoginVisible)
 
 import LoginMsg exposing (Msg(..))
-import API exposing (LoginError(..), authenticate, getLoginError)
+import API exposing (APILoginRequestError(..), authenticate, register, getLoginError)
+
+type LoginMode = Login | Register
+
+type FormValidationError = UnmatchingPasswords | MissingFields
+
+type LoginError = LoginRequestError APILoginRequestError | ValidationError FormValidationError
 
 type alias Model = 
   { username: String
   , password: String
+  , passwordRepeat: String
   , isVisible: Bool
-  , errorMsg: String
+  , error: Maybe LoginError
+  , mode: LoginMode
   }
 
 type alias LoginTranslation msg =
@@ -21,8 +27,10 @@ initModel : Model
 initModel = 
   { username = ""
   , password = ""
+  , passwordRepeat = ""
   , isVisible = False
-  , errorMsg = ""
+  , error = Nothing
+  , mode = Login
   }
 
 update : Msg -> Model -> String -> (Model, Cmd Msg)
@@ -34,6 +42,9 @@ update msg model token =
     PasswordInput input ->
       ({ model | password = input }, Cmd.none)
 
+    PasswordRepeatInput input ->
+      ({ model | passwordRepeat = input }, Cmd.none)
+
     OpenLogin ->
       ({ model | isVisible = True }, Cmd.none)
 
@@ -41,7 +52,12 @@ update msg model token =
       ({ model | isVisible = False }, Cmd.none)
 
     SubmitLogin ->
-      (model, loginCmd model token)
+      let
+        validationError = validateForm model
+      in
+        case validationError of
+          Just err -> ({ model | error = Just <| ValidationError err }, Cmd.none)
+          Nothing -> (model, loginCmd model token)
 
     FormKeyPress keyCode ->
       case keyCode of
@@ -53,7 +69,18 @@ update msg model token =
       let
         loginError = getLoginError error
       in
-        ({ model | errorMsg = getLoginErrorMessage loginError }, Cmd.none)
+        ({ model | error = Just <| LoginRequestError loginError }, Cmd.none)
+
+    SwitchMode ->
+      let
+        newMode =
+          case model.mode of
+            Login -> Register
+            Register -> Login
+      in
+        ({ model | mode = newMode, error = Nothing }, Cmd.none)
+
+    RegisterResponse res -> Debug.log "register response" (model, Cmd.none)
           
 
 isLoginVisible : Model -> Bool
@@ -66,16 +93,35 @@ translateMsg { loginMsg, loginResultMsg } msg =
       loginResultMsg
     _ ->
       loginMsg msg
-
-getLoginErrorMessage : LoginError -> String
-getLoginErrorMessage err =
-  case err of
-    BadCredentials -> "Incorrect username or password"
-    ServerError -> "Error when logging in"
     
 loginCmd : Model -> String -> Cmd Msg
 loginCmd model token =
-  let
-    creds = { username = model.username, password = model.password }
-  in
-    authenticate creds token LoginResponse
+  case model.mode of
+    Login ->
+      let
+        creds = { username = model.username, password = model.password }
+      in
+        authenticate creds token LoginResponse
+
+    Register ->
+      let
+        reg = { username = model.username, password = model.password, passwordRepeat = model.passwordRepeat }
+      in
+        register reg token RegisterResponse
+
+validateForm : Model -> Maybe FormValidationError
+validateForm model =
+  case model.mode of 
+    Register ->
+      if model.username == "" || model.password == "" || model.passwordRepeat == "" then
+        Just <| MissingFields
+      else if model.password /= model.passwordRepeat then
+        Just <| UnmatchingPasswords
+      else
+        Nothing
+    Login ->
+      if model.username == "" || model.password == "" then
+        Just <| MissingFields
+      else
+        Nothing
+  --model.mode == Register && model.password == model.passwordRepeat

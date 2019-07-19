@@ -13,7 +13,13 @@ type alias Credentials =
   , password: String
   }
 
-type LoginError = BadCredentials | ServerError
+type alias Registration = 
+  { username: String
+  , password: String
+  , passwordRepeat: String
+  }
+
+type APILoginRequestError = BadCredentials | ServerError
 
 isAuthenticated : (Result Error (Bool, String) -> msg) -> Cmd msg
 isAuthenticated msg =
@@ -35,12 +41,34 @@ authenticate creds token msg =
   in
     Http.send msg <| loginRequest token encodedCreds
 
+register : Registration -> String -> (Result Error (String) -> msg) -> Cmd msg
+register reg token msg =
+  Http.send msg <|
+    Http.request
+      { method = "POST"
+        , headers = [ Http.header "X-CSRFToken" token ]
+        , url = "http://localhost:8000/register" 
+        , body = Http.jsonBody <| encodeRegistration reg
+        , expect = Http.expectString
+        , timeout = Nothing
+        , withCredentials = True
+        }
+
+
 encodeCredentials : Credentials -> Value
 encodeCredentials creds =
   object 
   [ ("username", Enc.string creds.username)
   , ("password", Enc.string creds.password)
   ]
+
+encodeRegistration : Registration -> Value
+encodeRegistration reg =
+  object 
+    [ ("username", Enc.string reg.username)
+    , ("password", Enc.string reg.password)
+    , ("passwordRepeat", Enc.string reg.passwordRepeat)
+    ]
 
 loginRequest : String -> Http.Body -> Http.Request (Bool, String)
 loginRequest token body =
@@ -66,7 +94,7 @@ logout token msg =
         , withCredentials = True
         }
 
-getLoginError : Error -> LoginError
+getLoginError : Error -> APILoginRequestError
 getLoginError httpError =
   case httpError of
     Http.BadStatus r -> BadCredentials

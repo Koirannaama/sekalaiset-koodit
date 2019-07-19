@@ -1,0 +1,6 @@
+.vscode
+*.bat
+dist
+elm-stuff
+__pycache__
+*.txt
