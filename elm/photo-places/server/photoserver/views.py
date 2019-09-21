@@ -59,4 +59,13 @@ def savePhoto(request):
 
 @ensure_csrf_cookie
 def registerUser(request):
+  data = json.loads(request.body)
+
+  if not "username" in data or not "password" in data or not "passwordRepeat" in data:
+    return HttpResponse("Some fields were missing", status=400)
+
+  if User.objects.filter(username=data["username"]).exists():
+    return HttpResponse("Username already in use", status=409)
+
+  User.objects.create_user(data["username"], password=data["password"])
   return HttpResponse("OK", status=200)
