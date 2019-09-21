@@ -1,6 +1,6 @@
 module LoginMsg exposing (Msg(..))
 
-import Http
+import API exposing (APIError)
 
 type Msg =
   UsernameInput String
@@ -10,6 +10,6 @@ type Msg =
   | CloseLogin
   | SubmitLogin
   | FormKeyPress Int
-  | LoginResponse (Result Http.Error (Bool, String))
+  | LoginResponse (Result APIError (Bool, String))
   | SwitchMode
-  | RegisterResponse (Result Http.Error String)
+  | RegisterResponse (Result APIError String)

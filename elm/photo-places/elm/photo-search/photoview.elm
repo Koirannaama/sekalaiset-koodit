@@ -6,7 +6,7 @@ import Html.Events exposing (onInput, onClick)
 import Element exposing (toHtml, image)
 import Photos exposing (getPhotos)
 import Suggestion exposing (Suggestion, getDescription)
-import Msg exposing (Msg(PhotoMsg, StorePhoto))
+import Msg exposing (Msg(PhotoMsg))
 import PhotoModel exposing (Model, Msg(..))
 --import GalleryModel exposing (Msg(SavePhoto))
 import Direction exposing (Direction(..))
@@ -141,7 +141,7 @@ toggleSecondaryControlsButton isIconUp =
 saveToGalleryButton : String -> Html Msg.Msg
 saveToGalleryButton photoUrl =
   iconButton
-    [ class "col-md-2 button btn-secondary", onClick (StorePhoto photoUrl) ]
+    [ class "col-md-2 button btn-secondary", onClick (PhotoMsg (StorePhoto photoUrl)) ]
     (class "glyphicon glyphicon-floppy-disk")
 
 downloadButton : Html Msg.Msg

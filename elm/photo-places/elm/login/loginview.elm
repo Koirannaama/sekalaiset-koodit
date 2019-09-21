@@ -6,7 +6,7 @@ import Html.Events exposing (onInput, onClick, onSubmit, keyCode, on)
 import Json.Decode as Json
 import LoginModel exposing (Model, LoginMode(..), LoginError(..), FormValidationError(..))
 import LoginMsg exposing (Msg(..))
-import API exposing (APILoginRequestError(..))
+import API exposing (APIError(..))
 
 
 loginDialog : Model -> Html Msg
@@ -82,8 +82,11 @@ getLoginErrorMessage err =
   case err of
     LoginRequestError requestErr ->
       case requestErr of
+        UsernameTaken -> "This username has already been taken"
+        InvalidData -> "All fields must be filled"
         BadCredentials -> "Incorrect username or password"
         ServerError -> "Error when logging in"
+        _ -> "Something went wrong"
 
     ValidationError validationErr ->
       case validationErr of

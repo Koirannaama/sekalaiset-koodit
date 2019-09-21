@@ -1,10 +1,11 @@
 module API exposing (..)
 
 import Platform.Cmd exposing (Cmd)
-import Http exposing (Error)
+import Http exposing (Error, Response)
 import Json.Decode as Dec exposing (int, bool, field, string)
 import Json.Encode as Enc exposing (Value, object, string)
 import Time exposing (millisecond)
+import Result exposing (mapError)
 
 -- Module needs refactoring
 
@@ -19,7 +20,7 @@ type alias Registration =
   , passwordRepeat: String
   }
 
-type APILoginRequestError = BadCredentials | ServerError
+type APIError = BadCredentials | ServerError | UsernameTaken | InvalidData | NotAuthenticated
 
 isAuthenticated : (Result Error (Bool, String) -> msg) -> Cmd msg
 isAuthenticated msg =
@@ -34,18 +35,22 @@ isAuthenticated msg =
         , withCredentials = True -- is needed to set cookie with set-cookie-header
         }  
 
-authenticate : Credentials -> String -> (Result Error (Bool, String) -> msg) -> Cmd msg
+authenticate : Credentials -> String -> (Result APIError (Bool, String) -> msg) -> Cmd msg
 authenticate creds token msg =
   let
     encodedCreds = Http.jsonBody <| encodeCredentials creds
+    mapLoginError = mapError getLoginError
   in
-    Http.send msg <| loginRequest token encodedCreds
+    Http.send (msg << mapLoginError) <| loginRequest token encodedCreds
 
-register : Registration -> String -> (Result Error (String) -> msg) -> Cmd msg
+register : Registration -> String -> (Result APIError (String) -> msg) -> Cmd msg
 register reg token msg =
-  Http.send msg <|
-    Http.request
-      { method = "POST"
+  let
+    mapRegisterError = mapError getRegisterError
+  in
+    Http.send (msg << mapRegisterError) <|
+      Http.request
+        { method = "POST"
         , headers = [ Http.header "X-CSRFToken" token ]
         , url = "http://localhost:8000/register" 
         , body = Http.jsonBody <| encodeRegistration reg
@@ -94,19 +99,33 @@ logout token msg =
         , withCredentials = True
         }
 
-getLoginError : Error -> APILoginRequestError
+getStatusCode : Response a -> Int
+getStatusCode res = res.status.code
+
+getLoginError : Error -> APIError
 getLoginError httpError =
   case httpError of
     Http.BadStatus r -> BadCredentials
     _ -> ServerError
 
+getRegisterError : Error -> APIError
+getRegisterError httpError =
+  case httpError of
+    Http.BadStatus res ->
+      case getStatusCode res of
+        400 -> InvalidData
+        409 -> UsernameTaken
+        _ -> ServerError
+    _ -> ServerError
+
 -- Get token from response?
-storePhoto : String -> String -> (Result Error String -> msg) -> Cmd msg
+storePhoto : String -> String -> (Result APIError String -> msg) -> Cmd msg
 storePhoto token photoURL msg =
   let
     body = object [ ("url", Enc.string photoURL) ]
+    mapStoreError = mapError getStorePhotoError
   in
-    Http.send msg <|
+    Http.send (msg << mapStoreError) <|
       Http.request
         { method = "POST"
           , headers = [ Http.header "X-CSRFToken" token ]
@@ -116,3 +135,13 @@ storePhoto token photoURL msg =
           , timeout = Nothing
           , withCredentials = True
           }
+
+getStorePhotoError : Error -> APIError
+getStorePhotoError err =
+  case err of
+    Http.BadStatus res ->
+      case getStatusCode res of
+        401 -> NotAuthenticated
+        400 -> InvalidData
+        _ -> ServerError
+    _ -> ServerError

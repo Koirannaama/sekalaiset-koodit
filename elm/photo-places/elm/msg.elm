@@ -18,5 +18,5 @@ type Msg =
   | LoginSuccess
   | Logout
   | LogoutResult (Result Http.Error String)
-  | StorePhoto String
-  | StorePhotoResult (Result Http.Error String)
+  --| StorePhoto String
+  --| StorePhotoResult (Result Http.Error String)

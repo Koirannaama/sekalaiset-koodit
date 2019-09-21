@@ -36,7 +36,7 @@ update msg model =
   case msg of
     PhotoMsg photoMsg ->
       let
-        (newPhotoModel, cmd) = PhotoModel.update photoMsg model.photoModel
+        (newPhotoModel, cmd) = PhotoModel.update photoMsg model.photoModel model.csrfToken
       in
         ({ model | photoModel = newPhotoModel }, (Cmd.map PhotoMsg cmd))
     GalleryMsg galleryMsg ->
@@ -79,12 +79,12 @@ update msg model =
         (model, logoutCmd)
     LogoutResult (Ok (_)) -> ({ model | isLoggedIn = False }, Cmd.none) -- Holding on to the same CSRF token seems to work
     LogoutResult (Err _) -> (model, Cmd.none)
-    StorePhoto url ->
+    {- StorePhoto url ->
       let
         storeCmd = API.storePhoto model.csrfToken url StorePhotoResult
       in
         (model, storeCmd)
-    StorePhotoResult res -> (model, Cmd.none) -- Add error handling
+    StorePhotoResult res -> (model, Cmd.none) -} -- Add error handling
 
 subscriptions : Model -> Sub Msg.Msg
 subscriptions model =

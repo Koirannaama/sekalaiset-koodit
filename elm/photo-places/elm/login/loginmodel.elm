@@ -1,13 +1,13 @@
 module LoginModel exposing (Model, LoginMode(..), FormValidationError(..), LoginError(..), update, initModel, isLoginVisible)
 
 import LoginMsg exposing (Msg(..))
-import API exposing (APILoginRequestError(..), authenticate, register, getLoginError)
+import API exposing (APIError(..), authenticate, register, getLoginError)
 
 type LoginMode = Login | Register
 
 type FormValidationError = UnmatchingPasswords | MissingFields
 
-type LoginError = LoginRequestError APILoginRequestError | ValidationError FormValidationError
+type LoginError = LoginRequestError APIError | ValidationError FormValidationError
 
 type alias Model = 
   { username: String
@@ -66,10 +66,7 @@ update msg model token =
 
     LoginResponse (Ok _ ) -> (initModel, Cmd.none)
     LoginResponse (Err error) -> 
-      let
-        loginError = getLoginError error
-      in
-        ({ model | error = Just <| LoginRequestError loginError }, Cmd.none)
+        ({ model | error = Just <| LoginRequestError error }, Cmd.none)
 
     SwitchMode ->
       let
@@ -80,8 +77,9 @@ update msg model token =
       in
         ({ model | mode = newMode, error = Nothing }, Cmd.none)
 
-    RegisterResponse res -> Debug.log "register response" (model, Cmd.none)
-          
+    RegisterResponse (Ok _) -> (initModel, Cmd.none)
+    RegisterResponse (Err error) ->
+      ({model | error = Just <| LoginRequestError error}, Cmd.none)
 
 isLoginVisible : Model -> Bool
 isLoginVisible model = model.isVisible
@@ -124,4 +122,3 @@ validateForm model =
         Just <| MissingFields
       else
         Nothing
-  --model.mode == Register && model.password == model.passwordRepeat

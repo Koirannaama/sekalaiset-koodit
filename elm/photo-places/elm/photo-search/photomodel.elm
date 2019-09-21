@@ -5,6 +5,7 @@ import Direction exposing (Direction(..))
 import Suggestion exposing (Suggestion, RawSuggestion, getDescription, suggestion)
 import Photos exposing (Photos, PhotoData, init, nextPhotoUrl, prevPhotoUrl, getPhotos)
 import Ports exposing (..)
+import API exposing (APIError, storePhoto)
 
 type Msg =
   PlaceInput String
@@ -15,6 +16,10 @@ type Msg =
   | FreeTextSearch String
   | KeyPressed KeyCode
   | ToggleSecondaryPhotoControls
+  | StorePhoto String
+  | StorePhotoResult (Result APIError String)
+
+type PhotoError = StorePhotoError APIError
 
 type alias Model =
     { input: String
@@ -23,6 +28,7 @@ type alias Model =
     , isLoading: Bool
     , showSecondaryControls: Bool
     , photos: Photos
+    , error: Maybe PhotoError -- TODO: Show error in view
     }
 
 initModel :  Model 
@@ -33,10 +39,11 @@ initModel =
    , isLoading = False
    , showSecondaryControls = False
    , photos = init
+   , error = Nothing
    }
 
-update : Msg -> Model -> (Model, Cmd Msg)
-update msg model =
+update : Msg -> Model -> String -> (Model, Cmd Msg)
+update msg model token =
   case msg of
     PlaceInput input ->
       ({ model | input = input }, (placeInput input))
@@ -70,6 +77,14 @@ update msg model =
         _ -> (model, Cmd.none)
     ToggleSecondaryPhotoControls ->
       ((toggleSecondaryControls model), Cmd.none)
+    StorePhoto url ->
+      let
+        storeCmd = storePhoto token url StorePhotoResult
+      in
+        (model, storeCmd)
+    StorePhotoResult (Ok _) -> (model, Cmd.none)
+    StorePhotoResult (Err err) ->
+      ({ model | error = Just <| StorePhotoError err }, Cmd.none)
 
 setSuggestions : List RawSuggestion -> Model -> Model
 setSuggestions rawSuggs m =
@@ -92,6 +107,7 @@ setChosenSuggestion suggestion m =
      , isLoading = True
      , showSecondaryControls = m.showSecondaryControls
      , photos = m.photos
+     , error = Nothing
      }
 
 toggleSecondaryControls : Model -> Model
