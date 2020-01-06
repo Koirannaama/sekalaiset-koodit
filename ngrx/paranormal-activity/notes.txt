@@ -1,0 +1,15 @@
+- raportti
+  - paikka
+  - aika
+  - tyyppi (poltergeist, kummitus, alien...)
+  - spontaani vai kutsuttu
+  - esineet (pyhä vesi, Ouija-lauta, eye of newt, Necronomicon)
+  - horoskooppi
+  - lisätiedot
+
+- tyypit
+  - muutama valmis
+  - lomakkeen kautta voi uuden
+  - uudet pitää hyväksyä ennen kuin tulee vaihtoehdoiksi
+
+-feikkikirjautuminen

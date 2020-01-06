@@ -1,0 +1,51 @@
+<form [formGroup]="activityForm">
+  <label id="location">
+    <div>Location</div>
+    <input class="activity-form-field" type="text" for="location" formControlName="location"/>
+    <span class="field-error" *ngIf="location.invalid && (location.dirty || location.touched)">
+      <span *ngIf="location.errors.required">Location is required</span>
+    </span>
+  </label>
+  <label id="time">
+    <div>Time</div>
+    <input class="activity-form-field" matInput [matDatepicker]="picker" for="time" formControlName="time">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <span class="field-error" *ngIf="time.invalid && (time.dirty || time.touched)">
+      <span *ngIf="time.errors.required">Must enter a valid date</span>
+    </span>
+  </label>
+  <label id="type">
+    <div>Type of paranormal activity</div>
+    <select formControlName="type">
+      <option *ngFor="let type of activityTypes$ | async" [ngValue]="type">{{ type }}</option>
+    </select>
+    <input *ngIf="type.value === otherType" class="activity-form-field"
+      formControlName="freeTextType" type="text" placeholder="Describe here"/>
+    <span class="field-error"
+      *ngIf="(freeTextType.dirty || freeTextType.touched) && activityForm.errors && activityForm.errors.emptyType">
+      Must enter type
+    </span>
+  </label>
+  <label id="items" formArrayName="items">
+    <div>Items of paranormal nature present</div>
+    <div class="item-row" *ngFor="let item of items.controls; let i = index">
+      <input class="activity-form-field item-field" type="text" [formControlName]="i"/>
+      <button *ngIf="i !== 0" (click)="removeItem(i)">X</button>
+    </div>
+    <button (click)="addItem()">Add new item</button>
+  </label>
+  <label id="invoked">
+    <div>Deliberately invoked</div>
+    <input class="activity-form-field" type="checkbox" formControlName="invoked" for="invoked"/>
+  </label>
+  <label id="additional-info">
+    <div>Additional notes</div>
+    <textarea class="activity-form-field" type="text" for="additional-info"
+      formControlName="additionalInfo" rows="4" cols="50">
+    </textarea>
+  </label>
+  <button type="submit" (ngSubmit)="submitForm()" [disabled]="!activityForm.valid" (click)="submitForm()">Submit report</button>
+</form>
+
+
