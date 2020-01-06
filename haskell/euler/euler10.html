@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    const limit = 2000000;
+    let n = 2;
+    let primes = [];
+    let checked = new Array(limit);
+    checked[0] = checked[1] = 1;
+
+    while(n < Math.floor(Math.sqrt(limit))) {
+      while (checked[n] === 1) {
+        n++;
+      }
+
+      let i = 2;
+
+      while (i * n < limit) {
+        checked[i * n] = 1;
+        i++;
+      }
+      n++;
+    }
+
+    let sum = 0;
+    for (let i = 0; i < limit; i++) {
+      if (!checked[i]) {
+        primes.push(i);
+        sum += i;
+      }
+    }
+    console.log(sum);
+  </script>
+</body>
+</html>
