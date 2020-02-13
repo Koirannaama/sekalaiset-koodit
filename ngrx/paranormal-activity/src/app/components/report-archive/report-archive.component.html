@@ -1,3 +1,27 @@
-<div *ngFor="let report of reports$ | async">
-  {{ report.time | date:'shortDate' }}, {{ report.location }}
+<div class="archive-container">
+  <div class="report-list">
+    <div *ngFor="let report of reports$ | async" class="report" (click)="selectReport(report)" [class.selected]="report === selectedReport">
+      {{ report.time | date:'shortDate' }}, {{ report.location }}
+    </div>
+  </div>
+  <div class="report-viewer">
+    <div *ngIf="selectedReport; else norReport">
+      <div class="report-field">
+        <div class="header">Location</div>
+        <div class="field-data">{{ selectedReport.location }}</div>
+      </div>
+      <div class="report-field">
+        <div class="header">Time</div>
+        <div class="field-data">{{ selectedReport.time | date:'shortDate' }}</div>
+      </div>
+      <div class="report-field">
+        <div class="header">Type</div>
+        <div class="field-data">{{ selectedReport.type }}</div>
+      </div>
+    </div>
+    <ng-template #noReport>
+      Select a report from the list
+    </ng-template>
+  </div>
+
 </div>
