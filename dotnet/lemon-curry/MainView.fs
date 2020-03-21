@@ -3,35 +3,35 @@ module Views
 open System.Windows
 open System.Windows.Controls
 open System.Windows.Controls.Primitives
+open PeopleView
+open PlacesView
+open Components
 
-let buttonPanel =
-    //let panel = DockPanel( LastChildFill = false )
-    let placesButton = Button( Content = "Places" )
-    let peopleButton = Button( Content = "People" )
-    let uniformGrid = UniformGrid( Columns = 1)
+type MainView() as this =
+    inherit Grid()
 
-    //uniformGrid.Columns <- 1
-
-    //placesButton.Content <- "Places"
-    //peopleButton.Content <- "People"
-
-    //panel.LastChildFill <- false
-    uniformGrid.Children.Add(placesButton) |> ignore
-    uniformGrid.Children.Add(peopleButton) |> ignore
-    uniformGrid
-
-let MainView =
-    let grid = Grid( ShowGridLines = true )
     let leftCol = ColumnDefinition( Width = GridLength(200.0) )
     let rightCol = ColumnDefinition( Width = GridLength.Auto )
     let upRow = RowDefinition()
+    let buttonPanel = ButtonPanel()
+    let people = peopleView
+    let places = placesView
+    let changeView message =
+        let (current, next) = if message = "people" then (places, people) else (people, places)
+        do
+            this.Children.Remove(current)
+            this.Children.Add(next)
 
-    //grid.ShowGridLines <- true
-    grid.ColumnDefinitions.Add(leftCol)
-    grid.ColumnDefinitions.Add(rightCol)
-    Grid.SetColumn(buttonPanel, 0)
-    grid.Children.Add(buttonPanel) |> ignore
+    do 
+        this.Log()
+        this.ColumnDefinitions.Add(leftCol)
+        this.ColumnDefinitions.Add(rightCol)
+        Grid.SetColumn(buttonPanel, 0)
+        Grid.SetColumn(people, 1)
+        Grid.SetColumn(places, 1)
+        this.Children.Add(buttonPanel) |> ignore
+        buttonPanel.Clicks() |> Observable.subscribe changeView |> ignore
 
-    //leftCol.Width <- GridLength(200.0)
-    //rightCol.Width <- GridLength.Auto
-    grid
+
+    member this.PeopleView = peopleView
+    member this.Log() = printfn "main view"

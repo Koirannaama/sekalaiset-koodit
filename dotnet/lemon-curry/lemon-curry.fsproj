@@ -23,6 +23,9 @@
     <Reference Include="PresentationFramework" />-->
   </ItemGroup> 
   <ItemGroup>
+    <Compile Include="ButtonPanel.fs"/>
+    <Compile Include="PeopleView.fs"/>
+    <Compile Include="PlacesView.fs"/>
     <Compile Include="MainView.fs"/>
     <Compile Include="Program.fs" />
   </ItemGroup> 

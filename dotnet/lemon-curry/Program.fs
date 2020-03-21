@@ -10,7 +10,7 @@ let main argv =
     printfn "Hello World from F#!"
     let win = Window()
     let app = Application()
-    let mainView = MainView
+    let mainView = MainView()
     
     win.Content <- mainView
     win.Height <- 500.0
