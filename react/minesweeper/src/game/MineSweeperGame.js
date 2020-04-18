@@ -32,12 +32,12 @@ export class MineSweeperGame {
 
     let block = this.state.mineField[x][y];
 
-    if (block.opened || block.isMine || blocks.some(([i, j]) => i === x && j === y)) {
+    if (block.opened || blocks.some(([i, j]) => i === x && j === y)) {
       return blocks;
     }
 
     blocks.push([x, y]);
-    if (block.number !== 0) {
+    if (block.number !== 0 || block.isMine) {
       return blocks;
     }
 

@@ -1,31 +1,39 @@
 import { MineFieldBlock, MINE } from "./MineFieldBlock";
 
 export class MineFieldGenerator {
+  constructor() {
+    this.totalMines = 15;
+    this.fieldDimension = 10;
+  }
+
   generateMineField() {
-    let field = new Array(10).fill(null).reduce(
-      ([minesLeft, rows]) => {
-        let [mines, newRow] = this.generateRow(minesLeft);
-        rows.push(newRow)
-        return [mines, rows];
-      },
-      [10, []]
-    )[1];
+    const mines = this.generateMineCoords(this.totalMines, this.fieldDimension);
+
+    const field = new Array(this.fieldDimension).fill(null).map(
+      (_, x) => new Array(this.fieldDimension).fill(null).map(
+        (_, y) => mines.some(([mineX, mineY]) => x === mineX && y === mineY)
+          ? new MineFieldBlock(MINE) : new MineFieldBlock()
+      )
+    );
 
     field.forEach((row, x) => row.forEach((block, y) => block.number = this.minesAdjacentToBlockAt(x, y, field)));
     return field;
   }
 
-  generateRow(minesLeft) {
-    let row = new Array(10).fill(null).map(() => {
-      if (minesLeft && Math.random() <= 0.1) {
-        minesLeft--;
-        return new MineFieldBlock(MINE);
-      }
-      else {
-        return new MineFieldBlock();
-      }
-    });
-    return [minesLeft, row];
+  generateMineCoords(numberOfMines, fieldDimension) {
+    return new Array(numberOfMines).fill(null)
+      .reduce((mineCoords) => mineCoords.concat([this.generateMineCoord(mineCoords, fieldDimension)]), []);
+  }
+
+  generateMineCoord(allCoords, fieldDimension) {
+    const randomCoord = () => Math.floor(fieldDimension * Math.random());
+    const [newX, newY] = [randomCoord(), randomCoord()];
+    if (!allCoords.some(([x, y]) => x === newX && y === newY)) {
+      return [newX, newY];
+    }
+    else {
+      return this.generateMineCoord(allCoords, fieldDimension);
+    }
   }
 
   minesAdjacentToBlockAt(x, y, mineField) {
