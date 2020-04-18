@@ -2,7 +2,9 @@
   border: 0.125rem solid rgb(227, 233, 236);
   width: 1.5rem;
   height: 1.5rem;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.1s;
 
   &.square.closed {

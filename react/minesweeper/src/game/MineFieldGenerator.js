@@ -1,4 +1,4 @@
-import { MineFieldBlock } from "./MineFieldBlock";
+import { MineFieldBlock, MINE } from "./MineFieldBlock";
 
 export class MineFieldGenerator {
   generateMineField() {
@@ -12,7 +12,6 @@ export class MineFieldGenerator {
     )[1];
 
     field.forEach((row, x) => row.forEach((block, y) => block.number = this.minesAdjacentToBlockAt(x, y, field)));
-    console.log(field);
     return field;
   }
 
@@ -20,10 +19,10 @@ export class MineFieldGenerator {
     let row = new Array(10).fill(null).map(() => {
       if (minesLeft && Math.random() <= 0.1) {
         minesLeft--;
-        return new MineFieldBlock('b');
+        return new MineFieldBlock(MINE);
       }
       else {
-        return new MineFieldBlock('0');
+        return new MineFieldBlock();
       }
     });
     return [minesLeft, row];
@@ -33,7 +32,7 @@ export class MineFieldGenerator {
     let mines = 0;
     for (let i = x-1; i < x+2; i++) {
       for (let j = y-1; j < y+2; j++) {
-        if (mineField[i] && mineField[i][j] && mineField[i][j].isMine()) {
+        if (mineField[i] && mineField[i][j] && mineField[i][j].isMine) {
           mines++;
         }
       }

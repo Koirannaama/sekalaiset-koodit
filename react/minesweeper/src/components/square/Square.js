@@ -2,15 +2,11 @@ import React from 'react';
 import './Square.scss';
 
 export class Square extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   get content() {
     if (!this.props.data.opened) {
       return '';
     }
-    if (this.props.data.type === 'b') {
+    if (this.props.data.isMine) {
       return 'b';
     }
     return this.props.data.number;

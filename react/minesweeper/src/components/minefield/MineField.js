@@ -3,10 +3,6 @@ import './MineField.scss';
 import { Square } from '../square/Square';
 
 export class MineField extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div className="mine-field">
