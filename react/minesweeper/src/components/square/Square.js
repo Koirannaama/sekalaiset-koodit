@@ -12,9 +12,22 @@ export class Square extends React.Component {
     return this.props.data.number;
   }
 
+  get classes() {
+    return `square ${this.props.data.opened ? 'open' : 'closed'} ${this.props.data.marked ? 'marked' : ''}`;
+  }
+
+  rightClick(event) {
+    event.preventDefault();
+    this.props.onRightClick()
+    return false;
+  }
+
   render() {
     return (
-      <div className={`square ${this.props.data.opened ? 'open' : 'closed'}`} onClick={() => this.props.onClick()}>
+      <div
+        className={this.classes}
+        onClick={() => this.props.onClick()}
+        onContextMenu={event => this.rightClick(event)}>
         {this.content}
       </div>
     );
