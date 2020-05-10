@@ -1,0 +1,22 @@
+.mine-counter {
+  background-color: rgba(102, 118, 198, 0.5);
+  display: flex;
+  padding: 0.5rem;
+  color: white;
+
+  div {
+    flex: 1 0 3rem;
+    display: flex;
+    flex-direction: column;
+    width: 3rem;
+    text-align: center;
+    
+    span:first-child {
+      font-size: 0.75rem;
+    }
+
+    span:last-child {
+      font-weight: 600;
+    }
+  }
+}

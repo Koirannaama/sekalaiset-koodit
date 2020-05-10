@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.scss';
 import { MineField } from './components/minefield/MineField';
+import { MineCounter } from './components/mine-counter/MineCounter';
 import { MineSweeperGame } from './game/MineSweeperGame';
 
 
@@ -54,16 +55,17 @@ class App extends React.Component {
   render() {
     return (
       <div className="app">
-        <div>
+        <div class="game-box">
           <MineField
             field={this.state.gameState.mineField}
             squareClick={(x, y) => this.openBlock(x, y)}
             rightClick={(x, y) => this.markBlock(x, y)}>
           </MineField>
-          <div>
+          <div class="game-controls">
             <button onClick={() => this.startNewGame()}>New game</button>
-            <span>{this.state.message}</span>
+            <MineCounter markedCount={this.game.markedCount} totalCount={this.game.totalCount}/>
           </div>
+          <div>{this.state.message}</div>
         </div>
       </div>
     );

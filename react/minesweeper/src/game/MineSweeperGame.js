@@ -51,6 +51,18 @@ export class MineSweeperGame {
     };
   }
 
+  get markedCount() {
+    return this.state.mineField.reduce(
+      (markedTotal, row) => markedTotal + row.reduce(
+        (markedRow, block) => block.marked ? markedRow + 1 : markedRow, 0
+      ), 0
+    );
+  }
+
+  get totalCount() {
+    return this.generator.totalMines;
+  }
+
   findBlocksToOpen(x, y, blocks = []) {
     if (!this.state.mineField[x] || !this.state.mineField[x][y]) return blocks;
 
